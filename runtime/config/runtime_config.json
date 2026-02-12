@@ -1,0 +1,11 @@
+{
+  "schema_version": 1,
+  "instance_id": "site-local",
+  "output_root": "runtime/output",
+  "collectors": [
+    "linux_inventory"
+  ],
+  "checks": [
+    "asset_inventory_recorded"
+  ]
+}

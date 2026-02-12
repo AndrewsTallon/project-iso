@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://project-iso.local/runtime/schemas/collector/linux_inventory.schema.json",
+  "title": "Linux Inventory Collector Output",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["run_id", "collector_id", "host_id", "timestamp_utc", "hostname", "kernel", "os_pretty_name"],
+  "properties": {
+    "run_id": {"type": "string", "minLength": 1},
+    "collector_id": {"const": "linux_inventory"},
+    "host_id": {"type": "string", "minLength": 1},
+    "timestamp_utc": {"type": "string", "format": "date-time"},
+    "hostname": {"type": "string", "minLength": 1},
+    "kernel": {"type": "string", "minLength": 1},
+    "os_pretty_name": {"type": "string", "minLength": 1}
+  }
+}
