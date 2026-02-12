@@ -1,113 +1,209 @@
-# Runner Usage
+# Runner Usage and Continuous Operations Guide
 
-## Generate next steps
+This guide is written for two audiences:
 
-- Use the existing planner utility to refresh execution sequencing from `architecture_plan.json`.
+1. **Operator / tester**: runs the tool end-to-end and verifies that autonomous execution is healthy.
+2. **Follow-on Codex agent**: resumes work from repository state (`state/`, `work_items/`, `work_outputs/`) with minimal human intervention.
+
+---
+
+## 1) What this tool does
+
+The repository supports a deterministic compliance-delivery loop:
+
+1. Select unblocked tasks from `architecture_plan.json`.
+2. Generate task-specific `work_items/*.input.json`.
+3. Produce task output JSON in `work_outputs/*.output.json`.
+4. Validate output contracts and schemas.
+5. Promote valid outputs into accepted task status.
+6. Recompute coverage and reconcile architecture.
+
+Primary state files used for continuous operation:
+
+- `state/task_status.json`: lifecycle status for each task (pending, accepted, etc.).
+- `state/run_history.json`: run-attempt history by task.
+- `state/decision_log.jsonl`: append-only selection and reconciliation decisions.
+- `state/coverage.json`: current control coverage summary.
+
+---
+
+## 2) One-time setup for a fresh checkout
+
+Run these commands from repository root.
 
 ```bash
+python scripts/init_state.py
 python scripts/generate_next_steps.py
+python scripts/generate_coverage.py
 ```
 
-## Produce work items for tasks
+What to verify:
 
-- Build work items for currently unblocked tasks.
+- `state/` files now exist.
+- `next_steps.md` reflects current dependency ordering.
+- `state/coverage.json` exists and is valid JSON.
+
+If you intentionally need to reset state files, use:
 
 ```bash
-python scripts/agent_runner.py --dry-run
+python scripts/init_state.py --force
 ```
 
-- Build a specific task work item and create placeholder output file.
+---
+
+## 3) Operating modes
+
+### Mode A: Manual assisted (best for debugging)
+
+Use this mode to inspect each step and catch prompt/schema mismatches quickly.
 
 ```bash
+python scripts/supervisor.py --dry-run --pick 1 --explain-selection
 python scripts/agent_runner.py --task-id T01_platform_blueprint
-```
-
-- Select tasks listed in `next_steps.md` instead of using dependency checks.
-
-```bash
-python scripts/agent_runner.py --use-next-steps --dry-run
-```
-
-## Extract control data from Excel
-
-- Convert the workbook into JSON for offline inspection and downstream tooling.
-
-```bash
-python scripts/extract_controls.py --excel ISO_BSI_Compliance_Automation_Map_MVP.xlsx --output data/controls.json
-```
-
-## Validate an agent output
-
-- Validate from the main runner.
-
-```bash
-python scripts/agent_runner.py --validate work_outputs/T01_platform_blueprint.output.json --agent control_planner
-```
-
-- Validate with the standalone utility.
-
-```bash
 python scripts/validate_output.py work_outputs/T01_platform_blueprint.output.json --agent control_planner
+python scripts/promote_output.py --task-id T01_platform_blueprint
+python scripts/generate_coverage.py
+python scripts/reconcile_architecture.py --mode propose
 ```
 
-## Add a new agent type
+### Mode B: Autonomous single-cycle
 
-- Add a new schema under `schemas/` that references `schemas/agent_envelope.schema.json` via `allOf`.
-- Add a new system prompt under `prompts/` that requires strict JSON only output and includes deterministic `produced_files` paths.
-- Register the agent to schema mapping in both `scripts/agent_runner.py` and `scripts/validate_output.py`.
-- Ensure task graph entries in `architecture_plan.json` use the same `assigned_agent` string.
-- Generate new work items and validate a sample output.
-
-
-## Run the autonomous engine
-
-- Single full cycle (task selection -> model output -> validation -> promotion -> coverage -> reconciliation propose):
+Use a single command to run one full loop for one selected task:
 
 ```bash
 python scripts/engine.py --once --pick 1
 ```
 
-- Continuous loop mode:
+Use `--pick N` to process multiple tasks per cycle when safe.
+
+### Mode C: Continuous unattended operation (agents work alone)
+
+Run the loop continuously so the system advances tasks without manual interference.
 
 ```bash
 python scripts/engine.py --loop --interval-seconds 30 --pick 1
 ```
 
-- Dry run (no model/API calls):
+Recommended production-safe variant for additive architecture updates:
+
+```bash
+python scripts/engine.py --loop --interval-seconds 30 --pick 1 --auto-apply-architecture
+```
+
+Use dry run before any first unattended launch:
 
 ```bash
 python scripts/engine.py --dry-run --once
 ```
 
-- Optional guarded auto-apply for architecture reconciliation:
+---
+
+## 4) Suggested runbook for unattended execution
+
+1. Initialize and baseline state.
+2. Run one dry cycle.
+3. Run one live cycle.
+4. Start continuous loop.
+5. Periodically verify health artifacts.
+
+### Example runbook commands
 
 ```bash
-python scripts/engine.py --once --auto-apply-architecture
+python scripts/init_state.py
+python scripts/generate_coverage.py
+python scripts/engine.py --dry-run --once
+python scripts/engine.py --once --pick 1
+python scripts/engine.py --loop --interval-seconds 30 --pick 1
 ```
 
-## Enforce strict root contracts
-
-- Reject JSON outputs that include unknown root keys.
+### Health checks during long-running loops
 
 ```bash
+python scripts/validate_output.py work_outputs/ --recursive
 python scripts/contract_guard.py work_outputs/
+python scripts/generate_coverage.py
+python scripts/supervisor.py --dry-run --pick 3 --explain-selection
 ```
 
-- Run contract guard fixtures:
+Expected behavior:
+
+- Validation passes for all generated output files.
+- Contract guard reports no unknown root keys.
+- Coverage trends upward as accepted outputs accumulate.
+- Supervisor can still identify pending tasks until completion.
+
+---
+
+## 5) Tester handoff workflow (for returning to Codex with issues)
+
+When a tester finishes a run (or encounters an issue), collect and share:
+
+1. `state/task_status.json`
+2. `state/run_history.json`
+3. `state/decision_log.jsonl`
+4. `state/coverage.json`
+5. Failing `work_outputs/*.output.json` file(s), if any
+6. Exact command that produced the issue
+7. Terminal output/error snippet
+
+This package is enough for another Codex session to continue autonomously, diagnose failures, and resume progress without restarting the project.
+
+---
+
+## 6) Core utility commands (reference)
+
+### Planning and work-item generation
 
 ```bash
+python scripts/generate_next_steps.py
+python scripts/agent_runner.py --dry-run
+python scripts/agent_runner.py --task-id T01_platform_blueprint
+python scripts/agent_runner.py --use-next-steps --dry-run
+```
+
+### Validation and contract enforcement
+
+```bash
+python scripts/agent_runner.py --validate work_outputs/T01_platform_blueprint.output.json --agent control_planner
+python scripts/validate_output.py work_outputs/T01_platform_blueprint.output.json --agent control_planner
+python scripts/validate_output.py work_outputs/ --recursive
+python scripts/contract_guard.py work_outputs/
 python scripts/contract_guard.py tests/contracts/control_planner.valid.json
 python scripts/contract_guard.py tests/contracts/control_planner.invalid_extra_root.json
 ```
 
-## Validate output directories recursively
+### Promotion and reconciliation
 
 ```bash
-python scripts/validate_output.py work_outputs/ --recursive
+python scripts/promote_output.py --task-id T01_platform_blueprint
+python scripts/reconcile_architecture.py --mode propose
+python scripts/reconcile_architecture.py --mode apply
+python scripts/reconcile_architecture.py --mode propose --task-ids T01_platform_blueprint,T02_evidence_chain_design
 ```
 
-## Runtime scaffold smoke execution
+### Data extraction and runtime scaffold
 
 ```bash
+python scripts/extract_controls.py --excel ISO_BSI_Compliance_Automation_Map_MVP.xlsx --output data/controls.json
 runtime/bin/run-once
+```
+
+---
+
+## 7) Extending with a new agent type
+
+When adding a new specialist agent:
+
+1. Add schema in `schemas/` referencing `schemas/agent_envelope.schema.json` via `allOf`.
+2. Add prompt in `prompts/` that enforces strict JSON-only responses and deterministic `produced_files`.
+3. Register schema mapping in both:
+   - `scripts/agent_runner.py`
+   - `scripts/validate_output.py`
+4. Ensure `architecture_plan.json` uses the exact same `assigned_agent` identifier.
+5. Generate work item + sample output, then validate and guard:
+
+```bash
+python scripts/agent_runner.py --task-id <NEW_TASK_ID>
+python scripts/validate_output.py work_outputs/<NEW_TASK_ID>.output.json --agent <NEW_AGENT>
+python scripts/contract_guard.py work_outputs/<NEW_TASK_ID>.output.json
 ```
