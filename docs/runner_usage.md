@@ -175,6 +175,58 @@ Expected behavior:
 
 ---
 
+## Failure triage (deterministic)
+
+Use this flow to classify failures quickly and choose corrective actions without mixing contract errors with operational envelope/state errors.
+
+### Required incident bundle
+
+Capture this bundle before making fixes so a follow-on agent can reproduce deterministically:
+
+- Exact failing command.
+- Full stdout/stderr.
+- Failing file path.
+- `task_id`.
+- Envelope file (`work_outputs/<task_id>.envelope.json`).
+- Relevant `state/decision_log.jsonl` entries.
+
+### Stepwise triage flow
+
+1. **Selection/preparation failures** (`scripts/supervisor.py`, `scripts/agent_runner.py`)
+   - Check `state/task_status.json` for invalid lifecycle transitions and missing prerequisites.
+   - Verify required task inputs/work-item artifacts exist and match selected task IDs.
+2. **Contract failures** (`scripts/validate_output.py`, `scripts/contract_guard.py`)
+   - Classify strictly as either:
+     - **Schema mismatch** (required field/type/enum violation), or
+     - **Unknown root keys** (extra non-contract keys at output root).
+3. **Promotion failures** (`scripts/promote_output.py`)
+   - Check `coverage_claims` presence/format requirements.
+   - Check architecture update restrictions.
+   - Check task-state gate failures (for example, task not eligible for promotion).
+4. **Architecture reconcile failures** (`scripts/reconcile_architecture.py`)
+   - Parse proposal/diff output and isolate parse or structure issues.
+   - Confirm additive-change constraints are respected (no forbidden destructive edits).
+5. **Runtime objective drift**
+   - If a change introduces cloud/model dependency into the runtime execution path, mark as non-compliant with runtime objective and rollback/rework.
+
+### Failure category → probable cause → corrective action
+
+| Failure category | Probable cause | Corrective action |
+| --- | --- | --- |
+| Selection/preparation | Bad task-state transition, missing input artifact, stale run metadata | Repair `state/task_status.json` transition path, regenerate missing work item, rerun selection with `--explain-selection` |
+| Contract (schema mismatch) | Output shape/type diverges from agent schema | Regenerate `.output.json` to match schema exactly; rerun `validate_output.py` |
+| Contract (unknown root keys) | Envelope/debug/operational keys leaked into `.output.json` | Move non-contract keys into `.envelope.json`; rerun `contract_guard.py` |
+| Promotion | Missing/invalid `coverage_claims`, disallowed architecture updates, task-state gate not met | Add/fix `coverage_claims`, remove restricted architecture edits, satisfy state preconditions then rerun promotion |
+| Architecture reconcile | Proposal/diff parse failure or non-additive change attempt | Regenerate valid proposal/diff and constrain to additive changes only |
+| Runtime objective drift | Runtime path now depends on cloud/model calls | Remove external dependency from runtime path; keep offline deterministic execution |
+
+Interpretation rule:
+
+- **Contract failures** are data-contract violations in `.output.json`.
+- **Operational failures** are selection, envelope/state, promotion gates, and reconciliation-process issues.
+
+---
+
 ## 5) Tester handoff workflow (for returning to Codex with issues)
 
 When a tester finishes a run (or encounters an issue), collect and share:
