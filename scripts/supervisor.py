@@ -65,7 +65,7 @@ def build_downstream_map(task_graph: list[dict[str, Any]]) -> dict[str, set[str]
 
 
 def normalize_state(state: str | None) -> str:
-    if state in {"pending", "assigned", "accepted", "validated", "blocked"}:
+    if state in {"pending", "assigned", "accepted", "validated", "blocked", "needs_input"}:
         return state
     return "pending"
 
@@ -74,19 +74,56 @@ def is_dependency_satisfied(dep_state: str) -> bool:
     return dep_state in {"accepted", "validated"}
 
 
-def select_unblocked_tasks(task_graph: list[dict[str, Any]], task_status: dict[str, Any]) -> list[dict[str, Any]]:
+def is_candidate_state(record: dict[str, Any], max_attempts: int) -> tuple[bool, str | None]:
+    state = normalize_state(record.get("state"))
+    if state == "pending":
+        return (True, None)
+    if state == "needs_input":
+        attempts = int(record.get("attempts", 0))
+        if attempts < max_attempts:
+            return (True, None)
+        return (False, f"needs_input attempts exhausted ({attempts} >= {max_attempts})")
+    return (False, f"state {state} is not eligible")
+
+
+def evaluate_candidates(
+    task_graph: list[dict[str, Any]], task_status: dict[str, Any], max_attempts: int
+) -> list[dict[str, Any]]:
     records = task_status.get("tasks", {})
-    selected: list[dict[str, Any]] = []
+    evaluations: list[dict[str, Any]] = []
 
     for task in task_graph:
         task_id = task["task_id"]
-        state = normalize_state(records.get(task_id, {}).get("state"))
-        if state in {"accepted", "validated", "assigned"}:
-            continue
+        record = records.get(task_id, {})
+        state = normalize_state(record.get("state"))
+        candidate_ok, candidate_reject_reason = is_candidate_state(record, max_attempts)
         deps = task.get("blocking_dependencies", [])
-        if all(is_dependency_satisfied(normalize_state(records.get(dep, {}).get("state"))) for dep in deps):
-            selected.append(task)
-    return selected
+        deps_satisfied = all(
+            is_dependency_satisfied(normalize_state(records.get(dep, {}).get("state"))) for dep in deps
+        )
+        reject_reason = None
+        if not candidate_ok:
+            reject_reason = candidate_reject_reason
+        elif not deps_satisfied:
+            reject_reason = "blocking dependencies not satisfied"
+
+        evaluations.append(
+            {
+                "task": task,
+                "state": state,
+                "deps": deps,
+                "deps_satisfied": deps_satisfied,
+                "eligible": candidate_ok and deps_satisfied,
+                "reject_reason": reject_reason,
+            }
+        )
+
+    return evaluations
+
+
+def select_unblocked_tasks(task_graph: list[dict[str, Any]], task_status: dict[str, Any], max_attempts: int = 2) -> list[dict[str, Any]]:
+    evaluations = evaluate_candidates(task_graph, task_status, max_attempts=max_attempts)
+    return [entry["task"] for entry in evaluations if entry["eligible"]]
 
 
 def task_score(task: dict[str, Any], module_phase: dict[str, str], downstream_map: dict[str, set[str]]) -> tuple[int, int, int, str]:
@@ -143,8 +180,10 @@ def main() -> int:
     parser.add_argument("--run-history", default="state/run_history.json")
     parser.add_argument("--decision-log", default="state/decision_log.jsonl")
     parser.add_argument("--pick", type=int, default=1)
+    parser.add_argument("--max-attempts", type=int, default=2)
     parser.add_argument("--dry-run", action="store_true")
     parser.add_argument("--task", help="Force a specific task ID.")
+    parser.add_argument("--explain-selection", action="store_true")
     parser.add_argument("--update-coverage", action="store_true")
     args = parser.parse_args()
 
@@ -163,12 +202,43 @@ def main() -> int:
         if args.task not in task_map:
             print(f"Requested task not found: {args.task}")
             return 1
-        candidates = [task_map[args.task]]
+        forced = task_map[args.task]
+        candidates = [forced]
+        evaluations = [
+            {
+                "task": forced,
+                "state": normalize_state(task_status["tasks"][args.task].get("state")),
+                "deps": forced.get("blocking_dependencies", []),
+                "deps_satisfied": True,
+                "eligible": True,
+                "reject_reason": None,
+            }
+        ]
     else:
-        candidates = select_unblocked_tasks(task_graph, task_status)
+        evaluations = evaluate_candidates(task_graph, task_status, max_attempts=max(args.max_attempts, 0))
+        candidates = [entry["task"] for entry in evaluations if entry["eligible"]]
 
     ranked = sorted(candidates, key=lambda task: task_score(task, module_phase, downstream_map), reverse=True)
     picked = ranked[: max(args.pick, 0)]
+
+    if args.explain_selection:
+        for entry in sorted(evaluations, key=lambda item: item["task"]["task_id"]):
+            score = task_score(entry["task"], module_phase, downstream_map)
+            print(
+                " | ".join(
+                    [
+                        f"task={entry['task']['task_id']}",
+                        f"state={entry['state']}",
+                        f"deps={entry['deps']}",
+                        f"deps_satisfied={entry['deps_satisfied']}",
+                        f"score={score}",
+                        f"reject_reason={entry['reject_reason'] or '-'}",
+                    ]
+                )
+            )
+
+        would_pick = [task["task_id"] for task in picked]
+        print(f"Would select: {would_pick}")
 
     if not picked:
         print("No eligible tasks found.")
