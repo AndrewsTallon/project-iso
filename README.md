@@ -23,7 +23,7 @@ This repository captures an ISO 27001 + BSI IT-Grundschutz compliance automation
 - `scripts/extract_controls.py`: workbook-to-JSON extractor utility.
 - `data/`: extracted control datasets.
 - `work_items/`: deterministic input payloads for agent tasks.
-- `work_outputs/`: deterministic expected output files per task.
+- `work_outputs/`: task outputs (`<task_id>.output.json`), operational envelopes (`<task_id>.envelope.json`), and deterministic artifacts (`<task_id>.artifacts/`).
 - `modules/`: future collector module outputs.
 - `docs/runner_usage.md`: operational usage guide.
 
@@ -54,6 +54,8 @@ python scripts/extract_controls.py --output data/controls.json
 ```
 
 For detailed commands and extension guidance, see `docs/runner_usage.md`.
+
+Only `*.output.json` files are discoverable by contract validation and promotion gates; `*.envelope.json` files are operational metadata and are intentionally ignored by those tools.
 
 - Guard root-level output contracts (reject unknown keys, including extra root keys):
 

@@ -62,8 +62,13 @@ def guard_file(path: Path) -> int:
 
 def iter_targets(target: Path) -> list[Path]:
     if target.is_file():
-        return [target]
-    return sorted(target.glob("*.json"))
+        return [target] if target.name.endswith(".output.json") else []
+
+    discovered = [path for path in target.glob("*.output.json") if path.is_file()]
+    contracts_dir = target / "contracts"
+    if contracts_dir.is_dir():
+        discovered.extend(path for path in contracts_dir.glob("*.output.json") if path.is_file())
+    return sorted(set(discovered))
 
 
 def main() -> int:

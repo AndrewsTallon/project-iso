@@ -196,6 +196,22 @@ def deterministic_files(task_id: str, agent: str) -> list[str]:
     return [f"work_outputs/{task_id}.artifacts/{agent}_payload.json"]
 
 
+def envelope_path_for(task_id: str) -> Path:
+    return Path("work_outputs") / f"{task_id}.envelope.json"
+
+
+def build_envelope_payload(task: dict[str, Any], status: str, errors: list[str] | None = None) -> dict[str, Any]:
+    return {
+        "task_id": task["task_id"],
+        "module_id": task["module_id"],
+        "assigned_agent": task["assigned_agent"],
+        "run_status": status,
+        "errors": [str(item) for item in (errors or [])],
+        "generated_at": utc_now(),
+        "retryable": status != "ok",
+    }
+
+
 def build_agent_payload(agent: str, model_payload: dict[str, Any], task: dict[str, Any]) -> dict[str, Any]:
     payload_key = PAYLOAD_KEY_BY_AGENT[agent]
     subkeys = PAYLOAD_SUBKEYS_BY_AGENT[agent]
@@ -401,6 +417,7 @@ def run_cycle(args: argparse.Namespace) -> int:
         task_id = task["task_id"]
         work_item_path = Path("work_items") / f"{task_id}.input.json"
         output_path = Path("work_outputs") / f"{task_id}.output.json"
+        envelope_path = envelope_path_for(task_id)
 
         work_item = load_json(work_item_path)
         assigned_agent = task.get("assigned_agent", "")
@@ -426,6 +443,10 @@ def run_cycle(args: argparse.Namespace) -> int:
 
         output_path.parent.mkdir(parents=True, exist_ok=True)
         output_path.write_text(stable_dump(payload), encoding="utf-8")
+        envelope_path.write_text(
+            stable_dump(build_envelope_payload(task, status=payload.get("status", "error"), errors=payload.get("errors", []))),
+            encoding="utf-8",
+        )
 
         rc_val, out_val = run_command([sys.executable, "scripts/validate_output.py", str(output_path)])
         if rc_val != 0:

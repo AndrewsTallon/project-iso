@@ -68,11 +68,23 @@ def validate_file(output_path: Path, agent: str | None) -> int:
     return 0
 
 
+
+
+def validate_output(output_path: Path, agent: str | None) -> int:
+    """Backward-compatible function name used by promotion flow."""
+    return validate_file(output_path, agent)
 def iter_json_files(target: Path, recursive: bool) -> list[Path]:
     if target.is_file():
-        return [target]
-    pattern = "**/*.json" if recursive else "*.json"
-    return sorted(target.glob(pattern))
+        return [target] if target.name.endswith(".output.json") else []
+
+    if recursive:
+        return sorted(path for path in target.glob("**/*.output.json") if path.is_file())
+
+    discovered = [path for path in target.glob("*.output.json") if path.is_file()]
+    contracts_dir = target / "contracts"
+    if contracts_dir.is_dir():
+        discovered.extend(path for path in contracts_dir.glob("*.output.json") if path.is_file())
+    return sorted(set(discovered))
 
 
 def main() -> int:
