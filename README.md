@@ -68,3 +68,25 @@ python scripts/supervisor.py --pick 1 --update-coverage
 python scripts/validate_output.py work_outputs/T01_platform_blueprint.output.json --agent control_planner
 python scripts/generate_coverage.py
 ```
+
+
+## Architecture reconciliation
+
+Use the conservative reconciler to derive architecture proposals from accepted or validated task outputs.
+
+```bash
+python scripts/reconcile_architecture.py --mode propose
+```
+
+Apply mode archives the previous plan under `architecture/versions/` before writing the updated `architecture_plan.json`.
+
+```bash
+python scripts/reconcile_architecture.py --mode apply
+```
+
+Optional filters and paths:
+
+```bash
+python scripts/reconcile_architecture.py --mode propose --task-ids T01_platform_blueprint,T02_evidence_chain_design
+python scripts/reconcile_architecture.py --work-outputs work_outputs/ --task-status state/task_status.json
+```
