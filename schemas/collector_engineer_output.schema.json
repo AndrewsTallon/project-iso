@@ -1,0 +1,28 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://project-iso.local/schemas/collector_engineer_output.schema.json",
+  "title": "Collector Engineer Output",
+  "allOf": [
+    {
+      "$ref": "agent_envelope.schema.json"
+    },
+    {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["assigned_agent", "collector_design"],
+      "properties": {
+        "assigned_agent": {"const": "collector_engineer"},
+        "collector_design": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["connectors", "execution_plan", "evidence_contracts"],
+          "properties": {
+            "connectors": {"type": "array", "items": {"type": "string"}},
+            "execution_plan": {"type": "array", "items": {"type": "string"}},
+            "evidence_contracts": {"type": "array", "items": {"type": "string"}}
+          }
+        }
+      }
+    }
+  ]
+}

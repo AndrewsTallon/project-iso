@@ -1,0 +1,71 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://project-iso.local/schemas/agent_envelope.schema.json",
+  "title": "Agent Envelope",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "task_id",
+    "module_id",
+    "assigned_agent",
+    "status",
+    "summary",
+    "produced_files",
+    "notes",
+    "errors"
+  ],
+  "properties": {
+    "task_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "module_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "assigned_agent": {
+      "type": "string",
+      "enum": [
+        "control_planner",
+        "collector_engineer",
+        "evidence_engineer",
+        "security_hardening",
+        "qa_validation",
+        "documentation_generator"
+      ]
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "ok",
+        "needs_input",
+        "blocked",
+        "error"
+      ]
+    },
+    "summary": {
+      "type": "string",
+      "minLength": 1
+    },
+    "produced_files": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "^(modules|docs|data|work_outputs)/[A-Za-z0-9._\\/-]+$"
+      },
+      "uniqueItems": true
+    },
+    "notes": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "errors": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  }
+}

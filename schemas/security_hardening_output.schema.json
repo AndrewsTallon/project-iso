@@ -1,0 +1,28 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://project-iso.local/schemas/security_hardening_output.schema.json",
+  "title": "Security Hardening Output",
+  "allOf": [
+    {
+      "$ref": "agent_envelope.schema.json"
+    },
+    {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["assigned_agent", "hardening_plan"],
+      "properties": {
+        "assigned_agent": {"const": "security_hardening"},
+        "hardening_plan": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["baseline_items", "isolation_controls", "key_management_controls"],
+          "properties": {
+            "baseline_items": {"type": "array", "items": {"type": "string"}},
+            "isolation_controls": {"type": "array", "items": {"type": "string"}},
+            "key_management_controls": {"type": "array", "items": {"type": "string"}}
+          }
+        }
+      }
+    }
+  ]
+}

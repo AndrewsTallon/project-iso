@@ -1,0 +1,28 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://project-iso.local/schemas/documentation_generator_output.schema.json",
+  "title": "Documentation Generator Output",
+  "allOf": [
+    {
+      "$ref": "agent_envelope.schema.json"
+    },
+    {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["assigned_agent", "documentation_plan"],
+      "properties": {
+        "assigned_agent": {"const": "documentation_generator"},
+        "documentation_plan": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["documents", "audience", "delivery_notes"],
+          "properties": {
+            "documents": {"type": "array", "items": {"type": "string"}},
+            "audience": {"type": "array", "items": {"type": "string"}},
+            "delivery_notes": {"type": "array", "items": {"type": "string"}}
+          }
+        }
+      }
+    }
+  ]
+}
