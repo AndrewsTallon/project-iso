@@ -46,3 +46,25 @@ python scripts/extract_controls.py --output data/controls.json
 ```
 
 For detailed commands and extension guidance, see `docs/runner_usage.md`.
+
+## Self-expanding loop
+
+Run the persistent loop in this order:
+
+1. Initialize state files.
+2. Compute baseline coverage.
+3. Let the supervisor pick unblocked tasks and generate `work_items/` using `scripts/agent_runner.py`.
+4. Run agents and produce `work_outputs/*.output.json`.
+5. Validate outputs against schemas.
+6. Recompute coverage.
+
+Example commands:
+
+```bash
+python scripts/init_state.py
+python scripts/generate_coverage.py
+python scripts/supervisor.py --dry-run --pick 2
+python scripts/supervisor.py --pick 1 --update-coverage
+python scripts/validate_output.py work_outputs/T01_platform_blueprint.output.json --agent control_planner
+python scripts/generate_coverage.py
+```

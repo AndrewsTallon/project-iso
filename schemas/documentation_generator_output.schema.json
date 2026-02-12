@@ -9,17 +9,68 @@
     {
       "type": "object",
       "additionalProperties": false,
-      "required": ["assigned_agent", "documentation_plan"],
+      "required": [
+        "assigned_agent",
+        "documentation_plan"
+      ],
       "properties": {
-        "assigned_agent": {"const": "documentation_generator"},
+        "assigned_agent": {
+          "const": "documentation_generator"
+        },
         "documentation_plan": {
           "type": "object",
           "additionalProperties": false,
-          "required": ["documents", "audience", "delivery_notes"],
+          "required": [
+            "documents",
+            "audience",
+            "delivery_notes"
+          ],
           "properties": {
-            "documents": {"type": "array", "items": {"type": "string"}},
-            "audience": {"type": "array", "items": {"type": "string"}},
-            "delivery_notes": {"type": "array", "items": {"type": "string"}}
+            "documents": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "audience": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "delivery_notes": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "coverage_claims": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "controls": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "uniqueItems": true
+            },
+            "modules": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "uniqueItems": true
+            },
+            "bsi_domains": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "uniqueItems": true
+            }
           }
         }
       }
