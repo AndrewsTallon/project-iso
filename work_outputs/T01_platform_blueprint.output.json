@@ -1,0 +1,18 @@
+{
+  "task_id": "T01_platform_blueprint",
+  "module_id": "mod_evidence_integrity_export",
+  "assigned_agent": "control_planner",
+  "status": "ok",
+  "summary": "Scaffold plan created.",
+  "produced_files": [
+    "docs/T01_platform_blueprint.control_plan.json",
+    "work_outputs/T01_platform_blueprint.output.json"
+  ],
+  "notes": [],
+  "errors": [],
+  "plan": {
+    "control_decisions": ["Use agentless controls"],
+    "architecture_constraints": ["Intel N100 sizing"],
+    "bsi_mapping_notes": ["Map to BSI family placeholder"]
+  }
+}

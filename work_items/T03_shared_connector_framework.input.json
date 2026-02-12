@@ -1,0 +1,98 @@
+{
+  "task": {
+    "task_id": "T03_shared_connector_framework",
+    "module_id": "mod_asset_inventory",
+    "control_scope": [
+      "A.5.9",
+      "A.8.1",
+      "A.8.20"
+    ],
+    "description": "Design reusable agentless connector framework for SSH/WinRM/SNMP/API with credential vault integration and throttled scheduling.",
+    "assigned_agent": "collector_engineer",
+    "inputs_required": [
+      "Architecture constraint specification",
+      "target system matrix"
+    ],
+    "outputs_expected": [
+      "Connector abstraction design",
+      "collection schedule model",
+      "credential usage flow"
+    ],
+    "blocking_dependencies": [
+      "T01_platform_blueprint"
+    ]
+  },
+  "module": {
+    "module_id": "mod_asset_inventory",
+    "description": "Agentless discovery and normalized CMDB-style inventory for hosts, users, software, network nodes, and information assets using SSH, WinRM, SNMP, and local APIs.",
+    "covers_controls": [
+      "A.5.9",
+      "A.5.11",
+      "A.5.12",
+      "A.5.13",
+      "A.7.9",
+      "A.8.1",
+      "A.8.6",
+      "A.8.19"
+    ],
+    "shared_dependencies": [
+      "credential_vault",
+      "scheduler",
+      "discovery_connectors",
+      "evidence_ledger"
+    ],
+    "bsi_domains": [
+      "ORP",
+      "CON",
+      "OPS",
+      "SYS",
+      "NET"
+    ]
+  },
+  "controls": [
+    {
+      "control_id": "A.5.9",
+      "title": "",
+      "theme": "",
+      "automation_potential": "",
+      "complexity": "",
+      "method": "",
+      "artifacts": "",
+      "bsi_family": "",
+      "mvp_priority": "",
+      "source": "fallback_from_architecture_plan"
+    },
+    {
+      "control_id": "A.8.1",
+      "title": "",
+      "theme": "",
+      "automation_potential": "",
+      "complexity": "",
+      "method": "",
+      "artifacts": "",
+      "bsi_family": "",
+      "mvp_priority": "",
+      "source": "fallback_from_architecture_plan"
+    },
+    {
+      "control_id": "A.8.20",
+      "title": "",
+      "theme": "",
+      "automation_potential": "",
+      "complexity": "",
+      "method": "",
+      "artifacts": "",
+      "bsi_family": "",
+      "mvp_priority": "",
+      "source": "fallback_from_architecture_plan"
+    }
+  ],
+  "global_constraints": {
+    "deployment": "On-prem only",
+    "cloud_connectors": "Prohibited for MVP",
+    "hardware": "Intel N100 class, 16GB RAM, Linux appliance",
+    "collection_strategy": "Agentless-first via SSH/WinRM/APIs",
+    "compliance_scope": "ISO 27001 with explicit BSI IT-Grundschutz mapping"
+  },
+  "expected_schema": "schemas/collector_engineer_output.schema.json"
+}

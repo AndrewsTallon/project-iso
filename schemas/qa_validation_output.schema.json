@@ -1,0 +1,28 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://project-iso.local/schemas/qa_validation_output.schema.json",
+  "title": "QA Validation Output",
+  "allOf": [
+    {
+      "$ref": "agent_envelope.schema.json"
+    },
+    {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["assigned_agent", "validation_plan"],
+      "properties": {
+        "assigned_agent": {"const": "qa_validation"},
+        "validation_plan": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["test_matrix", "acceptance_criteria", "blocking_findings"],
+          "properties": {
+            "test_matrix": {"type": "array", "items": {"type": "string"}},
+            "acceptance_criteria": {"type": "array", "items": {"type": "string"}},
+            "blocking_findings": {"type": "array", "items": {"type": "string"}}
+          }
+        }
+      }
+    }
+  ]
+}

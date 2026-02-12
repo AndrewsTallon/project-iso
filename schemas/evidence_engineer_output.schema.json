@@ -1,0 +1,28 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://project-iso.local/schemas/evidence_engineer_output.schema.json",
+  "title": "Evidence Engineer Output",
+  "allOf": [
+    {
+      "$ref": "agent_envelope.schema.json"
+    },
+    {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["assigned_agent", "evidence_design"],
+      "properties": {
+        "assigned_agent": {"const": "evidence_engineer"},
+        "evidence_design": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["manifest_fields", "integrity_controls", "export_requirements"],
+          "properties": {
+            "manifest_fields": {"type": "array", "items": {"type": "string"}},
+            "integrity_controls": {"type": "array", "items": {"type": "string"}},
+            "export_requirements": {"type": "array", "items": {"type": "string"}}
+          }
+        }
+      }
+    }
+  ]
+}
