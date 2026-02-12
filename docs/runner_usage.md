@@ -98,6 +98,31 @@ python scripts/engine.py --dry-run --once
 
 ---
 
+## Definition of Done (DoD)
+
+This project tracks two distinct completion targets. Treat them as separate gates:
+
+- **Development loop done**: a task execution completed correctly inside the agent-driven workflow.
+- **Deployable appliance runtime done**: a production-ready offline runtime package exists for operators.
+
+### DoD for task-level agent execution (development only)
+
+- `work_items/<task_id>.input.json` generated deterministically.
+- `work_outputs/<task_id>.envelope.json` written with run metadata/status/errors.
+- `work_outputs/<task_id>.output.json` passes both:
+  - `python scripts/validate_output.py ...`
+  - `python scripts/contract_guard.py ...`
+- promotion succeeds and task state becomes accepted in `state/task_status.json`.
+
+### DoD for appliance runtime deliverable (product objective)
+
+- deployable runtime exists under `runtime/` with no LLM/API dependency.
+- runtime executes offline and emits evidence/check/report/export artifacts deterministically.
+- packageable artifact generated under `dist/` (or equivalent) with manifest + checksums.
+- operator runbook references only local scripts/binaries (no agent/model steps).
+
+---
+
 ## 4) Suggested runbook for unattended execution
 
 1. Initialize and baseline state.
