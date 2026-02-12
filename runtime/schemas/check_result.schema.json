@@ -1,0 +1,30 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://project-iso.local/runtime/schemas/check_result.schema.json",
+  "title": "Check Result",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "run_id",
+    "check_id",
+    "control_id",
+    "status",
+    "severity",
+    "summary",
+    "evidence_refs"
+  ],
+  "properties": {
+    "run_id": {"type": "string", "minLength": 1},
+    "check_id": {"type": "string", "minLength": 1},
+    "control_id": {"type": "string", "minLength": 1},
+    "status": {"type": "string", "enum": ["pass", "fail", "warn", "not_applicable"]},
+    "severity": {"type": "string", "enum": ["low", "medium", "high", "critical"]},
+    "summary": {"type": "string", "minLength": 1},
+    "evidence_refs": {
+      "type": "array",
+      "items": {"type": "string", "minLength": 1},
+      "minItems": 1,
+      "uniqueItems": true
+    }
+  }
+}

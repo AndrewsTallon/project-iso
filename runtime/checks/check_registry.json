@@ -1,0 +1,26 @@
+{
+  "schema_version": 1,
+  "checks": [
+    {
+      "check_id": "evidence_manifest_integrity",
+      "checker_module": "runtime/checks/evidence_integrity_checks.py",
+      "input_evidence_types": ["export_manifest", "artifact_hashes"],
+      "pass_criteria": "All referenced artifacts exist and hash values match.",
+      "severity": "high"
+    },
+    {
+      "check_id": "logging_service_enabled",
+      "checker_module": "runtime/checks/logging_checks.py",
+      "input_evidence_types": ["collector_linux_logging"],
+      "pass_criteria": "At least one supported logging service is active.",
+      "severity": "high"
+    },
+    {
+      "check_id": "asset_inventory_recorded",
+      "checker_module": "runtime/checks/inventory_checks.py",
+      "input_evidence_types": ["collector_linux_inventory"],
+      "pass_criteria": "Host identity, OS, and kernel fields are populated.",
+      "severity": "medium"
+    }
+  ]
+}

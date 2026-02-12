@@ -84,3 +84,30 @@ python scripts/engine.py --dry-run --once
 ```bash
 python scripts/engine.py --once --auto-apply-architecture
 ```
+
+## Enforce strict root contracts
+
+- Reject JSON outputs that include unknown root keys.
+
+```bash
+python scripts/contract_guard.py work_outputs/
+```
+
+- Run contract guard fixtures:
+
+```bash
+python scripts/contract_guard.py tests/contracts/control_planner.valid.json
+python scripts/contract_guard.py tests/contracts/control_planner.invalid_extra_root.json
+```
+
+## Validate output directories recursively
+
+```bash
+python scripts/validate_output.py work_outputs/ --recursive
+```
+
+## Runtime scaffold smoke execution
+
+```bash
+runtime/bin/run-once
+```

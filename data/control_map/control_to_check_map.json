@@ -1,0 +1,61 @@
+{
+  "schema_version": 1,
+  "mappings": [
+    {
+      "control_id": "A.5.28",
+      "bsi_domain": "DER",
+      "check_ids": ["evidence_manifest_integrity"],
+      "automation_level": "automated",
+      "required_evidence_types": ["export_manifest", "artifact_hashes"],
+      "manual_requirements": []
+    },
+    {
+      "control_id": "A.8.15",
+      "bsi_domain": "OPS",
+      "check_ids": ["logging_service_enabled", "log_retention_policy_present"],
+      "automation_level": "partially_automated",
+      "required_evidence_types": ["collector_linux_logging"],
+      "manual_requirements": ["Review business-specific logging completeness"]
+    },
+    {
+      "control_id": "A.8.16",
+      "bsi_domain": "OPS",
+      "check_ids": ["monitoring_agent_health"],
+      "automation_level": "partially_automated",
+      "required_evidence_types": ["collector_linux_logging"],
+      "manual_requirements": ["Correlate with SOC alert handling procedures"]
+    },
+    {
+      "control_id": "A.8.34",
+      "bsi_domain": "CON",
+      "check_ids": ["config_snapshot_available", "baseline_drift_detected"],
+      "automation_level": "automated",
+      "required_evidence_types": ["config_snapshot", "drift_report"],
+      "manual_requirements": []
+    },
+    {
+      "control_id": "A.5.9",
+      "bsi_domain": "ORP",
+      "check_ids": ["asset_owner_present"],
+      "automation_level": "partially_automated",
+      "required_evidence_types": ["collector_linux_inventory"],
+      "manual_requirements": ["Validate owner assignments with HR/system owners"]
+    },
+    {
+      "control_id": "A.8.1",
+      "bsi_domain": "OPS",
+      "check_ids": ["asset_inventory_recorded"],
+      "automation_level": "automated",
+      "required_evidence_types": ["collector_linux_inventory"],
+      "manual_requirements": []
+    },
+    {
+      "control_id": "A.8.20",
+      "bsi_domain": "OPS",
+      "check_ids": ["network_service_exposure_baseline"],
+      "automation_level": "partially_automated",
+      "required_evidence_types": ["network_service_snapshot"],
+      "manual_requirements": ["Approve acceptable exposure list"]
+    }
+  ]
+}

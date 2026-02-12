@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://project-iso.local/runtime/schemas/control_status.schema.json",
+  "title": "Control Status",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["run_id", "control_id", "automation_level", "status", "check_results"],
+  "properties": {
+    "run_id": {"type": "string", "minLength": 1},
+    "control_id": {"type": "string", "minLength": 1},
+    "automation_level": {"type": "string", "enum": ["automated", "partially_automated", "manual_required"]},
+    "status": {"type": "string", "enum": ["pass", "fail", "warn", "not_applicable"]},
+    "check_results": {
+      "type": "array",
+      "items": {"$ref": "check_result.schema.json"},
+      "minItems": 1
+    }
+  }
+}

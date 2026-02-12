@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://project-iso.local/runtime/schemas/report_input.schema.json",
+  "title": "Report Input",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["run_id", "control_statuses", "evidence_index"],
+  "properties": {
+    "run_id": {"type": "string", "minLength": 1},
+    "control_statuses": {
+      "type": "array",
+      "items": {"$ref": "control_status.schema.json"}
+    },
+    "evidence_index": {
+      "type": "array",
+      "items": {"$ref": "evidence_record.schema.json"}
+    }
+  }
+}

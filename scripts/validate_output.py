@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Validate an agent output JSON file against strict schemas."""
+"""Validate agent output JSON files against strict schemas."""
 
 from __future__ import annotations
 
@@ -39,7 +39,7 @@ def load_schema(schema_path: Path) -> dict[str, Any]:
     return schema
 
 
-def validate_output(output_path: Path, agent: str | None) -> int:
+def validate_file(output_path: Path, agent: str | None) -> int:
     try:
         from jsonschema.validators import Draft202012Validator
     except ImportError:
@@ -68,12 +68,29 @@ def validate_output(output_path: Path, agent: str | None) -> int:
     return 0
 
 
+def iter_json_files(target: Path, recursive: bool) -> list[Path]:
+    if target.is_file():
+        return [target]
+    pattern = "**/*.json" if recursive else "*.json"
+    return sorted(target.glob(pattern))
+
+
 def main() -> int:
-    parser = argparse.ArgumentParser(description="Validate an agent output JSON file.")
-    parser.add_argument("output", help="Path to output JSON file")
+    parser = argparse.ArgumentParser(description="Validate agent output JSON file(s).")
+    parser.add_argument("output", help="Path to output JSON file or directory")
     parser.add_argument("--agent", help="Explicit agent type override")
+    parser.add_argument("--recursive", action="store_true", help="Recursively validate all JSON files under a directory")
     args = parser.parse_args()
-    return validate_output(Path(args.output), args.agent)
+
+    target = Path(args.output)
+    if not target.exists():
+        print(f"FAIL: target does not exist: {target}")
+        return 1
+
+    code = 0
+    for file_path in iter_json_files(target, recursive=args.recursive):
+        code |= validate_file(file_path, args.agent)
+    return code
 
 
 if __name__ == "__main__":

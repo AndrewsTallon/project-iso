@@ -13,6 +13,11 @@ This repository captures an ISO 27001 + BSI IT-Grundschutz compliance automation
 - `scripts/agent_runner.py`: scaffold runner for work-item generation and schema validation.
 - `scripts/validate_output.py`: standalone output validator.
 
+- `scripts/contract_guard.py`: root-key contract guard to fail outputs containing unknown keys.
+- `runtime/`: deployable offline runtime scaffolding (collectors, checks, schemas, orchestrator).
+- `data/control_map/control_to_check_map.json`: initial ISO/BSI to executable check mapping for MVP.
+
+
 - `scripts/engine.py`: autonomous single-command loop runner for selection, model execution, validation, promotion, coverage refresh, and architecture reconciliation.
 - `config/engine_config.json`: model mapping + API key env-var name for the engine.
 - `scripts/extract_controls.py`: workbook-to-JSON extractor utility.
@@ -49,6 +54,25 @@ python scripts/extract_controls.py --output data/controls.json
 ```
 
 For detailed commands and extension guidance, see `docs/runner_usage.md`.
+
+- Guard root-level output contracts (reject unknown keys, including extra root keys):
+
+```bash
+python scripts/contract_guard.py work_outputs/
+```
+
+- Validate all outputs recursively:
+
+```bash
+python scripts/validate_output.py work_outputs/ --recursive
+```
+
+- Run minimal offline runtime orchestrator once:
+
+```bash
+runtime/bin/run-once
+```
+
 
 ## Self-expanding loop
 
