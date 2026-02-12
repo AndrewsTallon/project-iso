@@ -121,6 +121,22 @@ This project tracks two distinct completion targets. Treat them as separate gate
 - packageable artifact generated under `dist/` (or equivalent) with manifest + checksums.
 - operator runbook references only local scripts/binaries (no agent/model steps).
 
+## Envelope vs Contract outputs (mandatory separation)
+
+Never mix envelope metadata into contract outputs.
+
+- `work_outputs/<task_id>.envelope.json` is **operational metadata only**: run status, retry attempts, errors, timing, model-call diagnostics, and task selection/provenance details.
+- `work_outputs/<task_id>.output.json` is the **schema-validated business contract only**: agent-specific deliverable fields that downstream promotion consumes.
+- Run-control fields (status/debug/error/attempt/timing/provenance metadata) are forbidden in `.output.json`; they must live in `.envelope.json` or under `state/`.
+- `scripts/validate_output.py` and `scripts/contract_guard.py` must run only against `.output.json` targets.
+
+| File | Role | Validation scope |
+| --- | --- | --- |
+| `work_outputs/<task_id>.envelope.json` | Operational metadata, non-contract | Excluded from contract validation |
+| `work_outputs/<task_id>.output.json` | Business contract | Strict schema validation and promotion input |
+
+Rule: `.output.json` must not contain extra root keys beyond the defined contract schema. Any debug/error/status content belongs in the envelope or `state/` files.
+
 ---
 
 ## 4) Suggested runbook for unattended execution
@@ -144,8 +160,8 @@ python scripts/engine.py --loop --interval-seconds 30 --pick 1
 ### Health checks during long-running loops
 
 ```bash
-python scripts/validate_output.py work_outputs/ --recursive
-python scripts/contract_guard.py work_outputs/
+python scripts/validate_output.py work_outputs/T01_platform_blueprint.output.json --agent control_planner
+python scripts/contract_guard.py work_outputs/T01_platform_blueprint.output.json
 python scripts/generate_coverage.py
 python scripts/supervisor.py --dry-run --pick 3 --explain-selection
 ```
@@ -191,8 +207,7 @@ python scripts/agent_runner.py --use-next-steps --dry-run
 ```bash
 python scripts/agent_runner.py --validate work_outputs/T01_platform_blueprint.output.json --agent control_planner
 python scripts/validate_output.py work_outputs/T01_platform_blueprint.output.json --agent control_planner
-python scripts/validate_output.py work_outputs/ --recursive
-python scripts/contract_guard.py work_outputs/
+python scripts/contract_guard.py work_outputs/T01_platform_blueprint.output.json
 python scripts/contract_guard.py tests/contracts/control_planner.valid.json
 python scripts/contract_guard.py tests/contracts/control_planner.invalid_extra_root.json
 ```
