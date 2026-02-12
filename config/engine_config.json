@@ -1,0 +1,12 @@
+{
+  "openai_api_key_env": "OPENAI_API_KEY",
+  "models": {
+    "orchestrator": "o4-mini",
+    "control_planner": "o3",
+    "evidence_engineer": "o3",
+    "collector_engineer": "gpt-5-codex",
+    "qa_validation": "o3",
+    "security_hardening": "o3",
+    "documentation_generator": "gpt-4.1-mini"
+  }
+}

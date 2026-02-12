@@ -12,6 +12,9 @@ This repository captures an ISO 27001 + BSI IT-Grundschutz compliance automation
 - `prompts/`: system prompts for orchestrator and specialist agents.
 - `scripts/agent_runner.py`: scaffold runner for work-item generation and schema validation.
 - `scripts/validate_output.py`: standalone output validator.
+
+- `scripts/engine.py`: autonomous single-command loop runner for selection, model execution, validation, promotion, coverage refresh, and architecture reconciliation.
+- `config/engine_config.json`: model mapping + API key env-var name for the engine.
 - `scripts/extract_controls.py`: workbook-to-JSON extractor utility.
 - `data/`: extracted control datasets.
 - `work_items/`: deterministic input payloads for agent tasks.
@@ -91,4 +94,31 @@ Optional filters and paths:
 ```bash
 python scripts/reconcile_architecture.py --mode propose --task-ids T01_platform_blueprint,T02_evidence_chain_design
 python scripts/reconcile_architecture.py --work-outputs work_outputs/ --task-status state/task_status.json
+```
+
+
+## Autonomous engine
+
+Run one complete cycle for one picked task (default):
+
+```bash
+python scripts/engine.py --once --pick 1
+```
+
+Run continuously:
+
+```bash
+python scripts/engine.py --loop --interval-seconds 30 --pick 1
+```
+
+Dry run mode (no model calls):
+
+```bash
+python scripts/engine.py --dry-run --once
+```
+
+Enable guarded auto-apply for small additive architecture diffs:
+
+```bash
+python scripts/engine.py --once --auto-apply-architecture
 ```
