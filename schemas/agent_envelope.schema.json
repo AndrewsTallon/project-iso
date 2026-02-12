@@ -66,6 +66,33 @@
       "items": {
         "type": "string"
       }
+    },
+    "coverage_claims": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "controls": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "uniqueItems": true
+        },
+        "modules": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "uniqueItems": true
+        },
+        "bsi_domains": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "uniqueItems": true
+        }
+      }
     }
   }
 }

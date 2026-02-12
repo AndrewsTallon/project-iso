@@ -9,17 +9,68 @@
     {
       "type": "object",
       "additionalProperties": false,
-      "required": ["assigned_agent", "collector_design"],
+      "required": [
+        "assigned_agent",
+        "collector_design"
+      ],
       "properties": {
-        "assigned_agent": {"const": "collector_engineer"},
+        "assigned_agent": {
+          "const": "collector_engineer"
+        },
         "collector_design": {
           "type": "object",
           "additionalProperties": false,
-          "required": ["connectors", "execution_plan", "evidence_contracts"],
+          "required": [
+            "connectors",
+            "execution_plan",
+            "evidence_contracts"
+          ],
           "properties": {
-            "connectors": {"type": "array", "items": {"type": "string"}},
-            "execution_plan": {"type": "array", "items": {"type": "string"}},
-            "evidence_contracts": {"type": "array", "items": {"type": "string"}}
+            "connectors": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "execution_plan": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "evidence_contracts": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "coverage_claims": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "controls": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "uniqueItems": true
+            },
+            "modules": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "uniqueItems": true
+            },
+            "bsi_domains": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "uniqueItems": true
+            }
           }
         }
       }

@@ -1,0 +1,26 @@
+{
+  "by_bsi_domain": {},
+  "by_control": {},
+  "by_module": {},
+  "gaps": {
+    "top_bsi_domains_missing": [],
+    "top_iso_controls_missing": [],
+    "top_modules_blocked": []
+  },
+  "generated_at": "",
+  "overall": {
+    "bsi_domains_total": 0,
+    "bsi_domains_validated": 0,
+    "controls_accepted": 0,
+    "controls_in_progress": 0,
+    "controls_planned": 0,
+    "controls_total": 0,
+    "controls_unknown": 0,
+    "controls_validated": 0,
+    "controls_with_tasks": 0,
+    "modules_total": 0,
+    "modules_validated": 0,
+    "work_outputs_total": 0
+  },
+  "schema_version": 1
+}

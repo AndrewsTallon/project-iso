@@ -9,17 +9,68 @@
     {
       "type": "object",
       "additionalProperties": false,
-      "required": ["assigned_agent", "evidence_design"],
+      "required": [
+        "assigned_agent",
+        "evidence_design"
+      ],
       "properties": {
-        "assigned_agent": {"const": "evidence_engineer"},
+        "assigned_agent": {
+          "const": "evidence_engineer"
+        },
         "evidence_design": {
           "type": "object",
           "additionalProperties": false,
-          "required": ["manifest_fields", "integrity_controls", "export_requirements"],
+          "required": [
+            "manifest_fields",
+            "integrity_controls",
+            "export_requirements"
+          ],
           "properties": {
-            "manifest_fields": {"type": "array", "items": {"type": "string"}},
-            "integrity_controls": {"type": "array", "items": {"type": "string"}},
-            "export_requirements": {"type": "array", "items": {"type": "string"}}
+            "manifest_fields": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "integrity_controls": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "export_requirements": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "coverage_claims": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "controls": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "uniqueItems": true
+            },
+            "modules": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "uniqueItems": true
+            },
+            "bsi_domains": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "uniqueItems": true
+            }
           }
         }
       }
