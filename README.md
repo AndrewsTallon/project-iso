@@ -56,7 +56,8 @@ Run the persistent loop in this order:
 3. Let the supervisor pick unblocked tasks and generate `work_items/` using `scripts/agent_runner.py`.
 4. Run agents and produce `work_outputs/*.output.json`.
 5. Validate outputs against schemas.
-6. Recompute coverage.
+6. Promote produced outputs to accepted with deterministic gates.
+7. Recompute coverage.
 
 Example commands:
 
@@ -66,6 +67,7 @@ python scripts/generate_coverage.py
 python scripts/supervisor.py --dry-run --pick 2
 python scripts/supervisor.py --pick 1 --update-coverage
 python scripts/validate_output.py work_outputs/T01_platform_blueprint.output.json --agent control_planner
+python scripts/promote_output.py --task-id T01_platform_blueprint
 python scripts/generate_coverage.py
 ```
 
