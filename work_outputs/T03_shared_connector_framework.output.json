@@ -1,0 +1,46 @@
+{
+  "task_id": "T03_shared_connector_framework",
+  "module_id": "mod_asset_inventory",
+  "assigned_agent": "collector_engineer",
+  "status": "ok",
+  "summary": "Sample output for T03_shared_connector_framework.",
+  "produced_files": [
+    "docs/T03_shared_connector_framework.sample.json",
+    "work_outputs/T03_shared_connector_framework.output.json"
+  ],
+  "notes": [],
+  "errors": [],
+  "coverage_claims": {
+    "controls": [
+      "A.5.9",
+      "A.8.1",
+      "A.8.20"
+    ],
+    "modules": [
+      "mod_asset_inventory"
+    ],
+    "bsi_domains": [
+      "ORP",
+      "CON",
+      "OPS",
+      "SYS",
+      "NET"
+    ]
+  },
+  "collector_design": {
+    "connectors": [
+      "ssh_connector",
+      "winrm_connector",
+      "api_connector"
+    ],
+    "execution_plan": [
+      "Resolve targets from inventory seed",
+      "Schedule bounded collection windows",
+      "Write normalized evidence records"
+    ],
+    "evidence_contracts": [
+      "Emit stable evidence_record schema",
+      "Reference evidence ledger manifest id"
+    ]
+  }
+}
