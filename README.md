@@ -27,6 +27,28 @@ This repository captures an ISO 27001 + BSI IT-Grundschutz compliance automation
 - `modules/`: future collector module outputs.
 - `docs/runner_usage.md`: operational usage guide.
 
+
+## Environment prerequisites
+
+- Python 3.10+
+- Install dependencies:
+
+```bash
+pip install -r requirements.txt
+```
+
+- Run a preflight check before first execution:
+
+```bash
+python scripts/preflight.py
+```
+
+For runtime-only (on-prem appliance) deployment, run the runtime package without agents/model calls:
+
+```bash
+runtime/bin/run-once
+```
+
 ## Workflow
 
 - Regenerate dependency-oriented execution guidance.
