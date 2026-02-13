@@ -290,6 +290,18 @@ def main() -> int:
 
     task_filter = parse_task_filter(args.task_ids)
     allowed_tasks = get_allowed_tasks(task_status, task_filter)
+    if not allowed_tasks:
+        filter_hint = " (after --task-ids filtering)" if task_filter else ""
+        print(
+            "warning: no allowed tasks found in state/task_status.json; "
+            "reconciliation requires tasks in accepted/validated state" + filter_hint,
+            file=sys.stderr,
+        )
+        print(
+            "hint: run promotion/state update first, e.g. "
+            "python scripts/promote_output.py --task-id <TASK_ID>",
+            file=sys.stderr,
+        )
     selected_outputs = discover_outputs(work_outputs_dir, allowed_tasks)
 
     proposed_plan = copy.deepcopy(plan)
