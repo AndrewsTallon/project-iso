@@ -1,0 +1,98 @@
+{
+  "task": {
+    "task_id": "T04_asset_inventory_model",
+    "module_id": "mod_asset_inventory",
+    "control_scope": [
+      "A.5.9",
+      "A.8.1",
+      "A.8.6"
+    ],
+    "description": "Design normalized asset schema and reconciliation logic for hosts, software, services, owners, and business tags.",
+    "assigned_agent": "control_planner",
+    "inputs_required": [
+      "Connector abstraction design",
+      "control metadata catalog"
+    ],
+    "outputs_expected": [
+      "Asset schema",
+      "reconciliation rules",
+      "coverage KPI definition"
+    ],
+    "blocking_dependencies": [
+      "T03_shared_connector_framework"
+    ]
+  },
+  "module": {
+    "module_id": "mod_asset_inventory",
+    "description": "Agentless discovery and normalized CMDB-style inventory for hosts, users, software, network nodes, and information assets using SSH, WinRM, SNMP, and local APIs.",
+    "covers_controls": [
+      "A.5.9",
+      "A.5.11",
+      "A.5.12",
+      "A.5.13",
+      "A.7.9",
+      "A.8.1",
+      "A.8.6",
+      "A.8.19"
+    ],
+    "shared_dependencies": [
+      "credential_vault",
+      "scheduler",
+      "discovery_connectors",
+      "evidence_ledger"
+    ],
+    "bsi_domains": [
+      "ORP",
+      "CON",
+      "OPS",
+      "SYS",
+      "NET"
+    ]
+  },
+  "controls": [
+    {
+      "control_id": "A.5.9",
+      "title": "",
+      "theme": "",
+      "automation_potential": "",
+      "complexity": "",
+      "method": "",
+      "artifacts": "",
+      "bsi_family": "",
+      "mvp_priority": "",
+      "source": "fallback_from_architecture_plan"
+    },
+    {
+      "control_id": "A.8.1",
+      "title": "",
+      "theme": "",
+      "automation_potential": "",
+      "complexity": "",
+      "method": "",
+      "artifacts": "",
+      "bsi_family": "",
+      "mvp_priority": "",
+      "source": "fallback_from_architecture_plan"
+    },
+    {
+      "control_id": "A.8.6",
+      "title": "",
+      "theme": "",
+      "automation_potential": "",
+      "complexity": "",
+      "method": "",
+      "artifacts": "",
+      "bsi_family": "",
+      "mvp_priority": "",
+      "source": "fallback_from_architecture_plan"
+    }
+  ],
+  "global_constraints": {
+    "deployment": "On-prem only",
+    "cloud_connectors": "Prohibited for MVP",
+    "hardware": "Intel N100 class, 16GB RAM, Linux appliance",
+    "collection_strategy": "Agentless-first via SSH/WinRM/APIs",
+    "compliance_scope": "ISO 27001 with explicit BSI IT-Grundschutz mapping"
+  },
+  "expected_schema": "schemas/control_planner_output.schema.json"
+}

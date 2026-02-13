@@ -11,8 +11,28 @@
   "notes": [],
   "errors": [],
   "plan": {
-    "control_decisions": ["Use agentless controls"],
-    "architecture_constraints": ["Intel N100 sizing"],
-    "bsi_mapping_notes": ["Map to BSI family placeholder"]
+    "control_decisions": [
+      "Use agentless controls"
+    ],
+    "architecture_constraints": [
+      "Intel N100 sizing"
+    ],
+    "bsi_mapping_notes": [
+      "Map to BSI family placeholder"
+    ]
+  },
+  "coverage_claims": {
+    "controls": [
+      "A.5.28"
+    ],
+    "modules": [
+      "mod_evidence_integrity_export"
+    ],
+    "bsi_domains": [
+      "CON",
+      "OPS",
+      "ORP",
+      "DER"
+    ]
   }
 }

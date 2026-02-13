@@ -57,12 +57,15 @@ python scripts/init_state.py --force
 
 Use this mode to inspect each step and catch prompt/schema mismatches quickly.
 
+`python scripts/supervisor.py --dry-run ...` is non-mutating: it evaluates and prints selections but does not advance task state or write `state/task_status.json`, `state/run_history.json`, or `state/decision_log.jsonl`.
+
 ```bash
 python scripts/supervisor.py --dry-run --pick 1 --explain-selection
 python scripts/agent_runner.py --task-id T01_platform_blueprint
 python scripts/validate_output.py work_outputs/T01_platform_blueprint.output.json --agent control_planner
 python scripts/promote_output.py --task-id T01_platform_blueprint
 python scripts/generate_coverage.py
+# Precondition: reconcile only promoted tasks (accepted/validated in state/task_status.json)
 python scripts/reconcile_architecture.py --mode propose
 ```
 
@@ -163,6 +166,12 @@ python scripts/init_state.py
 python scripts/generate_coverage.py
 python scripts/engine.py --dry-run --once
 python scripts/engine.py --once --pick 1
+# Precondition before manual reconcile: run promotion/state update first
+# and ensure target task state is accepted or validated in state/task_status.json.
+# If reconcile prints "sources=0", no promoted tasks were eligible.
+# Fix: run `python scripts/promote_output.py --task-id <TASK_ID>` (or update task state)
+# then rerun reconcile.
+python scripts/reconcile_architecture.py --mode propose
 python scripts/engine.py --loop --interval-seconds 30 --pick 1
 ```
 
@@ -181,6 +190,7 @@ Expected behavior:
 - Contract guard reports no unknown root keys.
 - Coverage trends upward as accepted outputs accumulate.
 - Supervisor can still identify pending tasks until completion.
+- Supervisor dry-run checks do not mutate any state files.
 
 ---
 
@@ -277,8 +287,13 @@ python scripts/validate_output.py tests/contracts/control_planner.envelope.json
 
 ### Promotion and reconciliation
 
+Bundled sample outputs for `T01` through `T04` are checked in under `work_outputs/` and include non-empty `coverage_claims.controls`, `coverage_claims.modules`, and `coverage_claims.bsi_domains` values sourced from each task work item.
+
 ```bash
 python scripts/promote_output.py --task-id T01_platform_blueprint
+python scripts/promote_output.py --task-id T02_evidence_chain_design
+python scripts/promote_output.py --task-id T03_shared_connector_framework
+python scripts/promote_output.py --task-id T04_asset_inventory_model
 python scripts/reconcile_architecture.py --mode propose
 python scripts/reconcile_architecture.py --mode apply
 python scripts/reconcile_architecture.py --mode propose --task-ids T01_platform_blueprint,T02_evidence_chain_design

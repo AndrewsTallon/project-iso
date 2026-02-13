@@ -57,6 +57,8 @@ For detailed commands and extension guidance, see `docs/runner_usage.md`.
 
 Only `*.output.json` files are discoverable by contract validation and promotion gates; `*.envelope.json` files are operational metadata and are intentionally ignored by those tools.
 
+Bundled sample outputs for `T01`–`T04` are provided in `work_outputs/` and include deterministic `coverage_claims` derived from each task work item so promotion commands can be run directly.
+
 - Guard root-level output contracts (reject unknown keys, including extra root keys):
 
 ```bash
@@ -86,6 +88,8 @@ runtime/bin/run-once
 
 Run the persistent loop in this order:
 
+`python scripts/supervisor.py --dry-run ...` is non-mutating: it evaluates and prints selections but does not advance task state or write `state/task_status.json`, `state/run_history.json`, or `state/decision_log.jsonl`.
+
 1. Initialize state files.
 2. Compute baseline coverage.
 3. Let the supervisor pick unblocked tasks and generate `work_items/` using `scripts/agent_runner.py`.
@@ -99,17 +103,26 @@ Example commands:
 ```bash
 python scripts/init_state.py
 python scripts/generate_coverage.py
-python scripts/supervisor.py --dry-run --pick 2
+python scripts/supervisor.py --dry-run --pick 2  # non-mutating preview
 python scripts/supervisor.py --pick 1 --update-coverage
 python scripts/validate_output.py work_outputs/T01_platform_blueprint.output.json --agent control_planner
 python scripts/promote_output.py --task-id T01_platform_blueprint
+python scripts/promote_output.py --task-id T02_evidence_chain_design
+python scripts/promote_output.py --task-id T03_shared_connector_framework
+python scripts/promote_output.py --task-id T04_asset_inventory_model
 python scripts/generate_coverage.py
+# Precondition: reconcile only promoted tasks (accepted/validated in state/task_status.json)
+python scripts/reconcile_architecture.py --mode propose
 ```
 
 
 ## Architecture reconciliation
 
 Use the conservative reconciler to derive architecture proposals from accepted or validated task outputs.
+
+Precondition: tasks must already be promoted (state is `accepted` or `validated` in `state/task_status.json`).
+If reconciliation reports effectively empty sources (for example, `sources=0` with no changes), there were no eligible promoted tasks.
+Fix by running promotion/state update first (for example, `python scripts/promote_output.py --task-id <TASK_ID>`), then rerun reconciliation.
 
 ```bash
 python scripts/reconcile_architecture.py --mode propose
