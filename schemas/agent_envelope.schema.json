@@ -3,7 +3,6 @@
   "$id": "https://project-iso.local/schemas/agent_envelope.schema.json",
   "title": "Agent Envelope",
   "type": "object",
-  "additionalProperties": false,
   "required": [
     "task_id",
     "module_id",
