@@ -1,11 +1,15 @@
 {
   "schema_version": 1,
   "instance_id": "site-local",
+  "bundle_version": "0.1.0",
   "output_root": "runtime/output",
   "collectors": [
-    "linux_inventory"
+    "linux_inventory",
+    "linux_logging"
   ],
   "checks": [
-    "asset_inventory_recorded"
+    "asset_inventory_recorded",
+    "logging_service_enabled",
+    "evidence_manifest_integrity"
   ]
 }
