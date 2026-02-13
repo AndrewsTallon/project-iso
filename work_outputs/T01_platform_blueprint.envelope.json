@@ -1,0 +1,10 @@
+{
+  "task_id": "T01_platform_blueprint",
+  "run_status": "prepared",
+  "errors": [],
+  "generated_at": "1970-01-01T00:00:00+00:00",
+  "retryable": false,
+  "diagnostics": {
+    "source": "agent_runner_placeholder"
+  }
+}

@@ -1,4 +1,13 @@
 {
-  "runs": [],
+  "runs": [
+    {
+      "dry_run": true,
+      "pick_count": 1,
+      "picked_tasks": [
+        "T01_platform_blueprint"
+      ],
+      "timestamp": "2026-02-13T09:57:19+00:00"
+    }
+  ],
   "schema_version": 1
 }

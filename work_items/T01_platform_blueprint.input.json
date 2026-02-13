@@ -44,16 +44,30 @@
   },
   "controls": [
     {
-      "control_id": "A.5.28",
-      "title": "",
-      "theme": "",
-      "automation_potential": "",
-      "complexity": "",
-      "method": "",
-      "artifacts": "",
-      "bsi_family": "",
-      "mvp_priority": "",
-      "source": "fallback_from_architecture_plan"
+      "Control ID": "A.5.28",
+      "Theme": "Organizational",
+      "Control title": "Collection of evidence",
+      "Automation potential (appliance)": "High",
+      "Complexity": "Medium",
+      "How it would be automated (brief)": "Evidence chain: hash/sign exports, immutable storage, timestamping; generate evidence register.",
+      "Evidence artifacts produced (examples)": "Evidence register, hashed export manifest, signed ZIP, timestamp log",
+      "Notes / assumptions": "On-prem appliance (N100) runs collectors via agents/APIs; some controls require org process.",
+      "Indicative BSI IT-Grundschutz family": "ORP/CON (org/governance)",
+      "MVP priority": "P1",
+      "_sheet": "ISO27001_AnnexA_93"
+    },
+    {
+      "Control ID": "A.5.28",
+      "Theme": "Organizational",
+      "Control title": "Collection of evidence",
+      "Automation potential (appliance)": "High",
+      "Complexity": "Medium",
+      "How it would be automated (brief)": "Evidence chain: hash/sign exports, immutable storage, timestamping; generate evidence register.",
+      "Evidence artifacts produced (examples)": "Evidence register, hashed export manifest, signed ZIP, timestamp log",
+      "Notes / assumptions": "On-prem appliance (N100) runs collectors via agents/APIs; some controls require org process.",
+      "Indicative BSI IT-Grundschutz family": "ORP/CON (org/governance)",
+      "MVP priority": "P1",
+      "_sheet": "MVP_Priorities"
     }
   ],
   "global_constraints": {

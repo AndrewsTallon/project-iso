@@ -1,0 +1,961 @@
+{
+  "architecture_summary": {
+    "core_modules": [
+      {
+        "bsi_domains": [
+          "ORP",
+          "CON",
+          "OPS",
+          "SYS",
+          "NET"
+        ],
+        "covers_controls": [
+          "A.5.9",
+          "A.5.11",
+          "A.5.12",
+          "A.5.13",
+          "A.7.9",
+          "A.8.1",
+          "A.8.6",
+          "A.8.19"
+        ],
+        "description": "Agentless discovery and normalized CMDB-style inventory for hosts, users, software, network nodes, and information assets using SSH, WinRM, SNMP, and local APIs.",
+        "module_id": "mod_asset_inventory",
+        "shared_dependencies": [
+          "credential_vault",
+          "scheduler",
+          "discovery_connectors",
+          "evidence_ledger"
+        ]
+      },
+      {
+        "bsi_domains": [
+          "ORP",
+          "CON",
+          "SYS",
+          "OPS"
+        ],
+        "covers_controls": [
+          "A.5.15",
+          "A.5.16",
+          "A.5.17",
+          "A.5.18",
+          "A.6.5",
+          "A.8.2",
+          "A.8.3",
+          "A.8.4",
+          "A.8.5",
+          "A.8.18"
+        ],
+        "description": "Collection and correlation of identity, authentication, privileged rights, and access restriction state across Linux, Windows, and directory systems.",
+        "module_id": "mod_identity_access_posture",
+        "shared_dependencies": [
+          "asset_inventory",
+          "directory_api_connectors",
+          "policy_mapping_engine",
+          "evidence_ledger"
+        ]
+      },
+      {
+        "bsi_domains": [
+          "OPS",
+          "SYS",
+          "NET",
+          "ORP"
+        ],
+        "covers_controls": [
+          "A.5.37",
+          "A.8.9",
+          "A.8.19",
+          "A.8.32",
+          "A.8.34"
+        ],
+        "description": "Baseline capture, drift detection, approved change linkage, and operating procedure evidence for systems and network devices.",
+        "module_id": "mod_configuration_change_baseline",
+        "shared_dependencies": [
+          "asset_inventory",
+          "ticket_reference_ingest",
+          "collector_engine",
+          "evidence_ledger"
+        ]
+      },
+      {
+        "bsi_domains": [
+          "OPS",
+          "SYS",
+          "NET",
+          "CON"
+        ],
+        "covers_controls": [
+          "A.5.7",
+          "A.8.7",
+          "A.8.8",
+          "A.8.19",
+          "A.8.27"
+        ],
+        "description": "Vulnerability, patch, and malware posture ingestion with risk scoring and remediation status tracking for endpoints and servers.",
+        "module_id": "mod_vulnerability_malware_patch",
+        "shared_dependencies": [
+          "asset_inventory",
+          "os_package_collectors",
+          "scanner_api_ingest",
+          "evidence_ledger"
+        ]
+      },
+      {
+        "bsi_domains": [
+          "OPS",
+          "DER",
+          "SYS",
+          "NET",
+          "CON"
+        ],
+        "covers_controls": [
+          "A.5.24",
+          "A.5.25",
+          "A.5.26",
+          "A.5.27",
+          "A.8.15",
+          "A.8.16",
+          "A.8.17"
+        ],
+        "description": "Central evidence-oriented log integrity checks, monitoring status collection, alert traceability, and time synchronization verification.",
+        "module_id": "mod_logging_monitoring_time",
+        "shared_dependencies": [
+          "asset_inventory",
+          "syslog_collectors",
+          "time_source_probes",
+          "evidence_ledger"
+        ]
+      },
+      {
+        "bsi_domains": [
+          "OPS",
+          "SYS",
+          "CON",
+          "INF"
+        ],
+        "covers_controls": [
+          "A.5.29",
+          "A.5.30",
+          "A.8.6",
+          "A.8.13",
+          "A.8.14"
+        ],
+        "description": "Backup job state, restore-test evidence, retention verification, and resilience posture checks for continuity-related controls.",
+        "module_id": "mod_backup_recovery_resilience",
+        "shared_dependencies": [
+          "asset_inventory",
+          "backup_api_connectors",
+          "capacity_metrics",
+          "evidence_ledger"
+        ]
+      },
+      {
+        "bsi_domains": [
+          "NET",
+          "SYS",
+          "OPS",
+          "CON"
+        ],
+        "covers_controls": [
+          "A.5.14",
+          "A.8.20",
+          "A.8.21",
+          "A.8.22",
+          "A.8.23",
+          "A.8.24"
+        ],
+        "description": "Network topology, service exposure, segmentation, secure protocol, and cryptographic configuration evidence collection.",
+        "module_id": "mod_network_crypto_posture",
+        "shared_dependencies": [
+          "asset_inventory",
+          "network_state_collectors",
+          "certificate_parser",
+          "evidence_ledger"
+        ]
+      },
+      {
+        "bsi_domains": [
+          "CON",
+          "OPS",
+          "SYS",
+          "INF",
+          "ORP"
+        ],
+        "covers_controls": [
+          "A.5.33",
+          "A.5.34",
+          "A.7.10",
+          "A.7.14",
+          "A.8.10",
+          "A.8.11",
+          "A.8.12",
+          "A.8.33"
+        ],
+        "description": "Evidence of deletion workflows, masking, DLP policy status, media handling, and record protection controls.",
+        "module_id": "mod_data_protection_lifecycle",
+        "shared_dependencies": [
+          "asset_inventory",
+          "storage_policy_collectors",
+          "database_config_collectors",
+          "evidence_ledger"
+        ]
+      },
+      {
+        "bsi_domains": [
+          "ORP",
+          "CON",
+          "INF",
+          "DER"
+        ],
+        "covers_controls": [
+          "A.5.1",
+          "A.5.2",
+          "A.5.3",
+          "A.5.4",
+          "A.5.5",
+          "A.5.6",
+          "A.5.8",
+          "A.5.10",
+          "A.5.19",
+          "A.5.20",
+          "A.5.21",
+          "A.5.22",
+          "A.5.23",
+          "A.5.31",
+          "A.5.32",
+          "A.5.35",
+          "A.5.36",
+          "A.6.1",
+          "A.6.2",
+          "A.6.3",
+          "A.6.4",
+          "A.6.6",
+          "A.6.7",
+          "A.6.8",
+          "A.7.1",
+          "A.7.2",
+          "A.7.3",
+          "A.7.4",
+          "A.7.5",
+          "A.7.6",
+          "A.7.7",
+          "A.7.8",
+          "A.7.11",
+          "A.7.12",
+          "A.7.13"
+        ],
+        "description": "Central policy, legal, supplier, personnel, and physical-security evidence registry with control-to-document mapping and review cadence.",
+        "module_id": "mod_governance_supplier_compliance",
+        "shared_dependencies": [
+          "document_intake",
+          "workflow_engine",
+          "review_scheduler",
+          "evidence_ledger"
+        ]
+      },
+      {
+        "bsi_domains": [
+          "APP",
+          "SYS",
+          "OPS",
+          "ORP",
+          "CON"
+        ],
+        "covers_controls": [
+          "A.8.25",
+          "A.8.26",
+          "A.8.27",
+          "A.8.28",
+          "A.8.29",
+          "A.8.30",
+          "A.8.31"
+        ],
+        "description": "Secure development and test-environment assurance intake from existing on-prem repositories, CI logs, and release artifacts without cloud dependencies.",
+        "module_id": "mod_secure_development_assurance",
+        "shared_dependencies": [
+          "repository_readonly_connectors",
+          "build_log_ingest",
+          "evidence_ledger",
+          "governance_registry"
+        ]
+      },
+      {
+        "bsi_domains": [
+          "CON",
+          "OPS",
+          "ORP",
+          "DER"
+        ],
+        "covers_controls": [
+          "A.5.28",
+          "A.5.33",
+          "A.5.36",
+          "A.8.15",
+          "A.8.16",
+          "A.8.34"
+        ],
+        "description": "System-wide immutable evidence pipeline: canonicalization, hashing, signing, timestamping, manifesting, retention, and auditor export bundles.",
+        "module_id": "mod_evidence_integrity_export",
+        "shared_dependencies": [
+          "local_pki_or_signing_key",
+          "append_only_store",
+          "export_service",
+          "all_collection_modules"
+        ]
+      }
+    ],
+    "cross_control_dependencies": [
+      {
+        "controls": [
+          "A.5.9",
+          "A.8.1",
+          "A.8.2",
+          "A.8.20"
+        ],
+        "dependency_reason": "Accurate asset inventory is prerequisite for endpoint, identity, and network coverage completeness calculations."
+      },
+      {
+        "controls": [
+          "A.8.15",
+          "A.8.16",
+          "A.5.24",
+          "A.5.25",
+          "A.5.26",
+          "A.5.27"
+        ],
+        "dependency_reason": "Incident lifecycle evidence relies on logging, monitoring, and event timeline integrity."
+      },
+      {
+        "controls": [
+          "A.8.17",
+          "A.5.28",
+          "A.8.15"
+        ],
+        "dependency_reason": "Reliable timestamps are required for non-repudiable log and evidence chain validation."
+      },
+      {
+        "controls": [
+          "A.8.9",
+          "A.8.32",
+          "A.8.34"
+        ],
+        "dependency_reason": "Change records must map to baseline drift and protected audit-testing windows."
+      },
+      {
+        "controls": [
+          "A.8.7",
+          "A.8.8",
+          "A.8.13",
+          "A.5.30"
+        ],
+        "dependency_reason": "Recovery readiness is impacted by malware and vulnerability status of systems being restored."
+      },
+      {
+        "controls": [
+          "A.8.20",
+          "A.8.21",
+          "A.8.22",
+          "A.8.24"
+        ],
+        "dependency_reason": "Network service security and segmentation depend on transport protection and crypto posture."
+      },
+      {
+        "controls": [
+          "A.5.31",
+          "A.5.34",
+          "A.8.10",
+          "A.8.11",
+          "A.8.12"
+        ],
+        "dependency_reason": "Legal/privacy obligations drive required implementation evidence for deletion, masking, and leakage prevention."
+      },
+      {
+        "controls": [
+          "A.5.19",
+          "A.5.20",
+          "A.5.21",
+          "A.8.30"
+        ],
+        "dependency_reason": "Supplier and outsourced development controls share contract and assurance evidence sources."
+      }
+    ]
+  },
+  "implementation_phases": [
+    {
+      "focus_modules": [
+        "mod_asset_inventory",
+        "mod_evidence_integrity_export",
+        "mod_identity_access_posture",
+        "mod_configuration_change_baseline",
+        "mod_vulnerability_malware_patch",
+        "mod_logging_monitoring_time",
+        "mod_backup_recovery_resilience",
+        "mod_network_crypto_posture"
+      ],
+      "phase": "MVP",
+      "rationale": "Implements all P1 controls first with shared collectors and central evidence integrity, sized for Intel N100 by using scheduled pull-based collection and lightweight local storage/indexing."
+    },
+    {
+      "focus_modules": [
+        "mod_data_protection_lifecycle",
+        "mod_secure_development_assurance"
+      ],
+      "phase": "v2",
+      "rationale": "Adds P2 technical controls using existing inventory, evidence, and change pipelines; extends into SDLC and data lifecycle controls without cloud connectors."
+    },
+    {
+      "focus_modules": [
+        "mod_governance_supplier_compliance"
+      ],
+      "phase": "v3",
+      "rationale": "Completes broad P3 governance, personnel, supplier, and physical control evidence orchestration using reusable registry and workflow foundations."
+    }
+  ],
+  "task_graph": [
+    {
+      "assigned_agent": "control_planner",
+      "blocking_dependencies": [],
+      "control_scope": [
+        "A.5.28"
+      ],
+      "description": "Define appliance-wide architecture constraints, storage limits, retention tiers, and trust boundaries for Linux on Intel N100.",
+      "inputs_required": [
+        "Full ISO27001_AnnexA_93 sheet",
+        "MVP priorities",
+        "hardware constraints"
+      ],
+      "module_id": "mod_evidence_integrity_export",
+      "outputs_expected": [
+        "Architecture constraint specification",
+        "module interface contract v1"
+      ],
+      "task_id": "T01_platform_blueprint"
+    },
+    {
+      "assigned_agent": "evidence_engineer",
+      "blocking_dependencies": [
+        "T01_platform_blueprint"
+      ],
+      "control_scope": [
+        "A.5.28",
+        "A.8.15",
+        "A.8.16",
+        "A.8.34"
+      ],
+      "description": "Design canonical evidence manifest, hash/sign strategy, timestamp workflow, append-only storage, and export package format.",
+      "inputs_required": [
+        "Architecture constraint specification",
+        "cryptographic policy baseline"
+      ],
+      "module_id": "mod_evidence_integrity_export",
+      "outputs_expected": [
+        "Evidence data model",
+        "manifest schema",
+        "signature and export design"
+      ],
+      "task_id": "T02_evidence_chain_design"
+    },
+    {
+      "assigned_agent": "collector_engineer",
+      "blocking_dependencies": [
+        "T01_platform_blueprint"
+      ],
+      "control_scope": [
+        "A.5.9",
+        "A.8.1",
+        "A.8.20"
+      ],
+      "description": "Design reusable agentless connector framework for SSH/WinRM/SNMP/API with credential vault integration and throttled scheduling.",
+      "inputs_required": [
+        "Architecture constraint specification",
+        "target system matrix"
+      ],
+      "module_id": "mod_asset_inventory",
+      "outputs_expected": [
+        "Connector abstraction design",
+        "collection schedule model",
+        "credential usage flow"
+      ],
+      "task_id": "T03_shared_connector_framework"
+    },
+    {
+      "assigned_agent": "control_planner",
+      "blocking_dependencies": [
+        "T03_shared_connector_framework"
+      ],
+      "control_scope": [
+        "A.5.9",
+        "A.8.1",
+        "A.8.6"
+      ],
+      "description": "Design normalized asset schema and reconciliation logic for hosts, software, services, owners, and business tags.",
+      "inputs_required": [
+        "Connector abstraction design",
+        "control metadata catalog"
+      ],
+      "module_id": "mod_asset_inventory",
+      "outputs_expected": [
+        "Asset schema",
+        "reconciliation rules",
+        "coverage KPI definition"
+      ],
+      "task_id": "T04_asset_inventory_model"
+    },
+    {
+      "assigned_agent": "collector_engineer",
+      "blocking_dependencies": [
+        "T03_shared_connector_framework",
+        "T04_asset_inventory_model"
+      ],
+      "control_scope": [
+        "A.5.15",
+        "A.5.16",
+        "A.5.17",
+        "A.5.18",
+        "A.8.2",
+        "A.8.3",
+        "A.8.5",
+        "A.8.18"
+      ],
+      "description": "Design identity and privileged-access evidence collectors and account entitlement correlation approach.",
+      "inputs_required": [
+        "Connector abstraction design",
+        "Asset schema"
+      ],
+      "module_id": "mod_identity_access_posture",
+      "outputs_expected": [
+        "Identity collector specifications",
+        "privileged access evidence map"
+      ],
+      "task_id": "T05_identity_access_collectors"
+    },
+    {
+      "assigned_agent": "control_planner",
+      "blocking_dependencies": [
+        "T04_asset_inventory_model"
+      ],
+      "control_scope": [
+        "A.8.9",
+        "A.8.32",
+        "A.8.34",
+        "A.5.37"
+      ],
+      "description": "Design baseline/drift model, approved-change linkage, and audit-testing protection evidence flow.",
+      "inputs_required": [
+        "Asset schema",
+        "ticket/change source inventory"
+      ],
+      "module_id": "mod_configuration_change_baseline",
+      "outputs_expected": [
+        "Baseline model",
+        "drift classification taxonomy",
+        "change linkage design"
+      ],
+      "task_id": "T06_config_change_baseline_design"
+    },
+    {
+      "assigned_agent": "collector_engineer",
+      "blocking_dependencies": [
+        "T03_shared_connector_framework",
+        "T04_asset_inventory_model"
+      ],
+      "control_scope": [
+        "A.8.7",
+        "A.8.8",
+        "A.5.7"
+      ],
+      "description": "Design ingestion and scoring pipeline for malware and vulnerability posture from existing on-prem tools and OS-native sources.",
+      "inputs_required": [
+        "Connector abstraction design",
+        "Asset schema"
+      ],
+      "module_id": "mod_vulnerability_malware_patch",
+      "outputs_expected": [
+        "Vuln/malware collector specifications",
+        "risk scoring mapping"
+      ],
+      "task_id": "T07_vuln_malware_pipeline_design"
+    },
+    {
+      "assigned_agent": "collector_engineer",
+      "blocking_dependencies": [
+        "T03_shared_connector_framework",
+        "T04_asset_inventory_model"
+      ],
+      "control_scope": [
+        "A.8.15",
+        "A.8.16",
+        "A.8.17",
+        "A.5.24",
+        "A.5.25",
+        "A.5.26",
+        "A.5.27"
+      ],
+      "description": "Design log source onboarding, monitoring status checks, and time-sync verification model for incident evidence timelines.",
+      "inputs_required": [
+        "Connector abstraction design",
+        "Asset schema",
+        "incident process requirements"
+      ],
+      "module_id": "mod_logging_monitoring_time",
+      "outputs_expected": [
+        "Logging collector specifications",
+        "timeline integrity model"
+      ],
+      "task_id": "T08_logging_monitoring_time_design"
+    },
+    {
+      "assigned_agent": "control_planner",
+      "blocking_dependencies": [
+        "T04_asset_inventory_model"
+      ],
+      "control_scope": [
+        "A.8.13",
+        "A.8.14",
+        "A.5.29",
+        "A.5.30"
+      ],
+      "description": "Design backup job/retention/restore-test evidence model and resilience readiness checks.",
+      "inputs_required": [
+        "Asset schema",
+        "backup system landscape"
+      ],
+      "module_id": "mod_backup_recovery_resilience",
+      "outputs_expected": [
+        "Backup evidence schema",
+        "resilience KPI model"
+      ],
+      "task_id": "T09_backup_resilience_design"
+    },
+    {
+      "assigned_agent": "collector_engineer",
+      "blocking_dependencies": [
+        "T03_shared_connector_framework",
+        "T04_asset_inventory_model"
+      ],
+      "control_scope": [
+        "A.8.20",
+        "A.8.21",
+        "A.8.22",
+        "A.8.23",
+        "A.8.24",
+        "A.5.14"
+      ],
+      "description": "Design network state collectors for topology, service exposure, segmentation, and cryptographic posture evidence.",
+      "inputs_required": [
+        "Connector abstraction design",
+        "Asset schema",
+        "network zones definition"
+      ],
+      "module_id": "mod_network_crypto_posture",
+      "outputs_expected": [
+        "Network collector specifications",
+        "crypto posture evidence map"
+      ],
+      "task_id": "T10_network_crypto_design"
+    },
+    {
+      "assigned_agent": "evidence_engineer",
+      "blocking_dependencies": [
+        "T02_evidence_chain_design",
+        "T05_identity_access_collectors",
+        "T07_vuln_malware_pipeline_design",
+        "T08_logging_monitoring_time_design",
+        "T10_network_crypto_design"
+      ],
+      "control_scope": [
+        "A.5.28"
+      ],
+      "description": "Define evidence envelope bindings so all collector outputs are hashed, signed, timestamped, and traceable to control IDs.",
+      "inputs_required": [
+        "Evidence data model",
+        "collector specifications"
+      ],
+      "module_id": "mod_evidence_integrity_export",
+      "outputs_expected": [
+        "Collector-to-evidence mapping standard",
+        "integrity enforcement rules"
+      ],
+      "task_id": "T11_evidence_binding_for_collectors"
+    },
+    {
+      "assigned_agent": "security_hardening",
+      "blocking_dependencies": [
+        "T01_platform_blueprint",
+        "T02_evidence_chain_design"
+      ],
+      "control_scope": [
+        "A.8.1",
+        "A.8.2",
+        "A.8.5",
+        "A.8.24"
+      ],
+      "description": "Define appliance hardening baseline for key management, local service isolation, and secure storage on Linux host.",
+      "inputs_required": [
+        "Architecture constraint specification",
+        "Evidence data model"
+      ],
+      "module_id": "mod_evidence_integrity_export",
+      "outputs_expected": [
+        "Appliance hardening profile",
+        "key management policy"
+      ],
+      "task_id": "T12_security_hardening_baseline"
+    },
+    {
+      "assigned_agent": "qa_validation",
+      "blocking_dependencies": [
+        "T11_evidence_binding_for_collectors",
+        "T12_security_hardening_baseline",
+        "T06_config_change_baseline_design",
+        "T09_backup_resilience_design"
+      ],
+      "control_scope": [
+        "A.5.9",
+        "A.5.28",
+        "A.8.1",
+        "A.8.2",
+        "A.8.3",
+        "A.8.4",
+        "A.8.5",
+        "A.8.6",
+        "A.8.7",
+        "A.8.8",
+        "A.8.9",
+        "A.8.13",
+        "A.8.14",
+        "A.8.15",
+        "A.8.16",
+        "A.8.17",
+        "A.8.18",
+        "A.8.19",
+        "A.8.20",
+        "A.8.21",
+        "A.8.22",
+        "A.8.23",
+        "A.8.24",
+        "A.8.32",
+        "A.8.34"
+      ],
+      "description": "Design MVP control validation matrix and acceptance criteria for evidence completeness, freshness, and integrity.",
+      "inputs_required": [
+        "All MVP module designs",
+        "collector-to-evidence mapping standard"
+      ],
+      "module_id": "mod_evidence_integrity_export",
+      "outputs_expected": [
+        "MVP test matrix",
+        "acceptance gate checklist"
+      ],
+      "task_id": "T13_mvp_validation_plan"
+    },
+    {
+      "assigned_agent": "documentation_generator",
+      "blocking_dependencies": [
+        "T13_mvp_validation_plan"
+      ],
+      "control_scope": [
+        "A.5.28",
+        "A.5.36"
+      ],
+      "description": "Design documentation artifacts for auditors: architecture dossier, control mapping catalog, evidence export operation guide.",
+      "inputs_required": [
+        "MVP module designs",
+        "MVP validation matrix"
+      ],
+      "module_id": "mod_evidence_integrity_export",
+      "outputs_expected": [
+        "Audit-ready architecture document set",
+        "operator runbook"
+      ],
+      "task_id": "T14_mvp_documentation_pack"
+    },
+    {
+      "assigned_agent": "control_planner",
+      "blocking_dependencies": [
+        "T14_mvp_documentation_pack"
+      ],
+      "control_scope": [
+        "A.8.10",
+        "A.8.11",
+        "A.8.12",
+        "A.8.33",
+        "A.5.33",
+        "A.5.34"
+      ],
+      "description": "Design v2 data deletion, masking, leakage, and test-data evidence model linked to legal and privacy obligations.",
+      "inputs_required": [
+        "MVP architecture outputs",
+        "legal requirement register"
+      ],
+      "module_id": "mod_data_protection_lifecycle",
+      "outputs_expected": [
+        "Data lifecycle control model",
+        "required evidence mapping"
+      ],
+      "task_id": "T15_data_lifecycle_v2_design"
+    },
+    {
+      "assigned_agent": "collector_engineer",
+      "blocking_dependencies": [
+        "T14_mvp_documentation_pack"
+      ],
+      "control_scope": [
+        "A.8.25",
+        "A.8.26",
+        "A.8.27",
+        "A.8.28",
+        "A.8.29",
+        "A.8.30",
+        "A.8.31"
+      ],
+      "description": "Design v2 secure-development evidence ingestion from on-prem repositories and CI/test systems.",
+      "inputs_required": [
+        "MVP architecture outputs",
+        "on-prem dev tool inventory"
+      ],
+      "module_id": "mod_secure_development_assurance",
+      "outputs_expected": [
+        "SDLC collector design",
+        "development assurance evidence schema"
+      ],
+      "task_id": "T16_secure_dev_v2_design"
+    },
+    {
+      "assigned_agent": "evidence_engineer",
+      "blocking_dependencies": [
+        "T15_data_lifecycle_v2_design",
+        "T16_secure_dev_v2_design"
+      ],
+      "control_scope": [
+        "A.8.10",
+        "A.8.11",
+        "A.8.12",
+        "A.8.25",
+        "A.8.29"
+      ],
+      "description": "Extend evidence chain mappings and export manifests for v2 modules while preserving backward compatibility.",
+      "inputs_required": [
+        "Data lifecycle control model",
+        "SDLC collector design",
+        "existing manifest schema"
+      ],
+      "module_id": "mod_evidence_integrity_export",
+      "outputs_expected": [
+        "Manifest v2 specification",
+        "compatibility constraints"
+      ],
+      "task_id": "T17_v2_evidence_extension"
+    },
+    {
+      "assigned_agent": "qa_validation",
+      "blocking_dependencies": [
+        "T17_v2_evidence_extension"
+      ],
+      "control_scope": [
+        "A.8.10",
+        "A.8.11",
+        "A.8.12",
+        "A.8.25",
+        "A.8.26",
+        "A.8.27",
+        "A.8.28",
+        "A.8.29",
+        "A.8.30",
+        "A.8.31",
+        "A.8.33"
+      ],
+      "description": "Define v2 QA validation plan and auditor documentation for extended technical control set.",
+      "inputs_required": [
+        "Manifest v2 specification",
+        "v2 module designs"
+      ],
+      "module_id": "mod_data_protection_lifecycle",
+      "outputs_expected": [
+        "v2 acceptance matrix",
+        "v2 audit content package"
+      ],
+      "task_id": "T18_v2_validation_and_docs"
+    },
+    {
+      "assigned_agent": "control_planner",
+      "blocking_dependencies": [
+        "T18_v2_validation_and_docs"
+      ],
+      "control_scope": [
+        "A.5.1",
+        "A.5.2",
+        "A.5.3",
+        "A.5.4",
+        "A.5.5",
+        "A.5.6",
+        "A.5.8",
+        "A.5.10",
+        "A.5.19",
+        "A.5.20",
+        "A.5.21",
+        "A.5.22",
+        "A.5.23",
+        "A.5.31",
+        "A.5.32",
+        "A.5.35",
+        "A.5.36",
+        "A.6.1",
+        "A.6.2",
+        "A.6.3",
+        "A.6.4",
+        "A.6.6",
+        "A.6.7",
+        "A.6.8",
+        "A.7.1",
+        "A.7.2",
+        "A.7.3",
+        "A.7.4",
+        "A.7.5",
+        "A.7.6",
+        "A.7.7",
+        "A.7.8",
+        "A.7.11",
+        "A.7.12",
+        "A.7.13"
+      ],
+      "description": "Design governance/personnel/physical/supplier evidence workflows and review cadences leveraging established evidence integrity framework.",
+      "inputs_required": [
+        "v2 audit content package",
+        "policy and contract repository inventory"
+      ],
+      "module_id": "mod_governance_supplier_compliance",
+      "outputs_expected": [
+        "Governance workflow architecture",
+        "review calendar model"
+      ],
+      "task_id": "T19_governance_v3_design"
+    },
+    {
+      "assigned_agent": "documentation_generator",
+      "blocking_dependencies": [
+        "T19_governance_v3_design"
+      ],
+      "control_scope": [
+        "A.5.31",
+        "A.5.36",
+        "A.6.8",
+        "A.7.4"
+      ],
+      "description": "Finalize v3 validation strategy, documentation set, and hardening updates for long-term on-prem operations.",
+      "inputs_required": [
+        "Governance workflow architecture",
+        "existing hardening profile",
+        "manifest v2 specification"
+      ],
+      "module_id": "mod_governance_supplier_compliance",
+      "outputs_expected": [
+        "Full program architecture dossier",
+        "final compliance evidence production handbook"
+      ],
+      "task_id": "T20_v3_validation_docs_hardening"
+    }
+  ]
+}

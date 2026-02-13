@@ -1,4 +1,105 @@
 {
   "schema_version": 1,
-  "tasks": {}
+  "tasks": {
+    "T01_platform_blueprint": {
+      "last_updated": "2026-02-13T09:57:19+00:00",
+      "module_id": "mod_evidence_integrity_export",
+      "state": "assigned"
+    },
+    "T02_evidence_chain_design": {
+      "last_updated": "",
+      "module_id": "mod_evidence_integrity_export",
+      "state": "pending"
+    },
+    "T03_shared_connector_framework": {
+      "last_updated": "",
+      "module_id": "mod_asset_inventory",
+      "state": "pending"
+    },
+    "T04_asset_inventory_model": {
+      "last_updated": "",
+      "module_id": "mod_asset_inventory",
+      "state": "pending"
+    },
+    "T05_identity_access_collectors": {
+      "last_updated": "",
+      "module_id": "mod_identity_access_posture",
+      "state": "pending"
+    },
+    "T06_config_change_baseline_design": {
+      "last_updated": "",
+      "module_id": "mod_configuration_change_baseline",
+      "state": "pending"
+    },
+    "T07_vuln_malware_pipeline_design": {
+      "last_updated": "",
+      "module_id": "mod_vulnerability_malware_patch",
+      "state": "pending"
+    },
+    "T08_logging_monitoring_time_design": {
+      "last_updated": "",
+      "module_id": "mod_logging_monitoring_time",
+      "state": "pending"
+    },
+    "T09_backup_resilience_design": {
+      "last_updated": "",
+      "module_id": "mod_backup_recovery_resilience",
+      "state": "pending"
+    },
+    "T10_network_crypto_design": {
+      "last_updated": "",
+      "module_id": "mod_network_crypto_posture",
+      "state": "pending"
+    },
+    "T11_evidence_binding_for_collectors": {
+      "last_updated": "",
+      "module_id": "mod_evidence_integrity_export",
+      "state": "pending"
+    },
+    "T12_security_hardening_baseline": {
+      "last_updated": "",
+      "module_id": "mod_evidence_integrity_export",
+      "state": "pending"
+    },
+    "T13_mvp_validation_plan": {
+      "last_updated": "",
+      "module_id": "mod_evidence_integrity_export",
+      "state": "pending"
+    },
+    "T14_mvp_documentation_pack": {
+      "last_updated": "",
+      "module_id": "mod_evidence_integrity_export",
+      "state": "pending"
+    },
+    "T15_data_lifecycle_v2_design": {
+      "last_updated": "",
+      "module_id": "mod_data_protection_lifecycle",
+      "state": "pending"
+    },
+    "T16_secure_dev_v2_design": {
+      "last_updated": "",
+      "module_id": "mod_secure_development_assurance",
+      "state": "pending"
+    },
+    "T17_v2_evidence_extension": {
+      "last_updated": "",
+      "module_id": "mod_evidence_integrity_export",
+      "state": "pending"
+    },
+    "T18_v2_validation_and_docs": {
+      "last_updated": "",
+      "module_id": "mod_data_protection_lifecycle",
+      "state": "pending"
+    },
+    "T19_governance_v3_design": {
+      "last_updated": "",
+      "module_id": "mod_governance_supplier_compliance",
+      "state": "pending"
+    },
+    "T20_v3_validation_docs_hardening": {
+      "last_updated": "",
+      "module_id": "mod_governance_supplier_compliance",
+      "state": "pending"
+    }
+  }
 }
