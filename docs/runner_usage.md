@@ -27,6 +27,26 @@ Primary state files used for continuous operation:
 
 ---
 
+
+## Environment prerequisites
+
+- **Python**: 3.10 or newer.
+- **Install dependencies**:
+
+```bash
+python -m pip install -r requirements.txt
+```
+
+- **Quick verification**:
+
+```bash
+python -c "import jsonschema, openpyxl; print('ok')" 
+```
+
+`requirements.txt` uses minimally compatible version pins (`>=`). To upgrade safely, rerun installation in a clean virtual environment and execute the smoke/validation commands documented in this guide before committing dependency updates.
+
+---
+
 ## 2) One-time setup for a fresh checkout
 
 Run these commands from repository root.
