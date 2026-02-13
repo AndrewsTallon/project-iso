@@ -57,6 +57,8 @@ python scripts/init_state.py --force
 
 Use this mode to inspect each step and catch prompt/schema mismatches quickly.
 
+`python scripts/supervisor.py --dry-run ...` is non-mutating: it evaluates and prints selections but does not advance task state or write `state/task_status.json`, `state/run_history.json`, or `state/decision_log.jsonl`.
+
 ```bash
 python scripts/supervisor.py --dry-run --pick 1 --explain-selection
 python scripts/agent_runner.py --task-id T01_platform_blueprint
@@ -188,6 +190,7 @@ Expected behavior:
 - Contract guard reports no unknown root keys.
 - Coverage trends upward as accepted outputs accumulate.
 - Supervisor can still identify pending tasks until completion.
+- Supervisor dry-run checks do not mutate any state files.
 
 ---
 

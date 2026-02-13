@@ -88,6 +88,8 @@ runtime/bin/run-once
 
 Run the persistent loop in this order:
 
+`python scripts/supervisor.py --dry-run ...` is non-mutating: it evaluates and prints selections but does not advance task state or write `state/task_status.json`, `state/run_history.json`, or `state/decision_log.jsonl`.
+
 1. Initialize state files.
 2. Compute baseline coverage.
 3. Let the supervisor pick unblocked tasks and generate `work_items/` using `scripts/agent_runner.py`.
@@ -101,7 +103,7 @@ Example commands:
 ```bash
 python scripts/init_state.py
 python scripts/generate_coverage.py
-python scripts/supervisor.py --dry-run --pick 2
+python scripts/supervisor.py --dry-run --pick 2  # non-mutating preview
 python scripts/supervisor.py --pick 1 --update-coverage
 python scripts/validate_output.py work_outputs/T01_platform_blueprint.output.json --agent control_planner
 python scripts/promote_output.py --task-id T01_platform_blueprint
