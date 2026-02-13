@@ -109,12 +109,18 @@ python scripts/promote_output.py --task-id T02_evidence_chain_design
 python scripts/promote_output.py --task-id T03_shared_connector_framework
 python scripts/promote_output.py --task-id T04_asset_inventory_model
 python scripts/generate_coverage.py
+# Precondition: reconcile only promoted tasks (accepted/validated in state/task_status.json)
+python scripts/reconcile_architecture.py --mode propose
 ```
 
 
 ## Architecture reconciliation
 
 Use the conservative reconciler to derive architecture proposals from accepted or validated task outputs.
+
+Precondition: tasks must already be promoted (state is `accepted` or `validated` in `state/task_status.json`).
+If reconciliation reports effectively empty sources (for example, `sources=0` with no changes), there were no eligible promoted tasks.
+Fix by running promotion/state update first (for example, `python scripts/promote_output.py --task-id <TASK_ID>`), then rerun reconciliation.
 
 ```bash
 python scripts/reconcile_architecture.py --mode propose

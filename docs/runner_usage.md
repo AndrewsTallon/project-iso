@@ -63,6 +63,7 @@ python scripts/agent_runner.py --task-id T01_platform_blueprint
 python scripts/validate_output.py work_outputs/T01_platform_blueprint.output.json --agent control_planner
 python scripts/promote_output.py --task-id T01_platform_blueprint
 python scripts/generate_coverage.py
+# Precondition: reconcile only promoted tasks (accepted/validated in state/task_status.json)
 python scripts/reconcile_architecture.py --mode propose
 ```
 
@@ -163,6 +164,12 @@ python scripts/init_state.py
 python scripts/generate_coverage.py
 python scripts/engine.py --dry-run --once
 python scripts/engine.py --once --pick 1
+# Precondition before manual reconcile: run promotion/state update first
+# and ensure target task state is accepted or validated in state/task_status.json.
+# If reconcile prints "sources=0", no promoted tasks were eligible.
+# Fix: run `python scripts/promote_output.py --task-id <TASK_ID>` (or update task state)
+# then rerun reconcile.
+python scripts/reconcile_architecture.py --mode propose
 python scripts/engine.py --loop --interval-seconds 30 --pick 1
 ```
 
