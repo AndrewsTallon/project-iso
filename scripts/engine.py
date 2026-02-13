@@ -116,21 +116,44 @@ def get_api_key(config: dict[str, Any]) -> str:
     raise RuntimeError(f"Missing API key: set {env_name} in environment or .env")
 
 
-def call_model_http(api_key: str, model: str, system_prompt: str, work_item: dict[str, Any], task_id: str) -> str:
+def resolve_model_params(config: dict[str, Any], agent: str) -> dict[str, Any]:
+    defaults = config.get("model_params", {})
+    overrides = config.get("model_params_by_agent", {}).get(agent, {}) if isinstance(config.get("model_params_by_agent"), dict) else {}
+
+    resolved: dict[str, Any] = {}
+    if isinstance(defaults, dict):
+        resolved.update(defaults)
+    if isinstance(overrides, dict):
+        resolved.update(overrides)
+
+    if "temperature" in resolved and resolved["temperature"] == 0:
+        raise ValueError("Resolved model params must not set temperature to 0")
+    return resolved
+
+
+def call_model_http(
+    api_key: str,
+    model: str,
+    system_prompt: str,
+    work_item: dict[str, Any],
+    task_id: str,
+    model_params: dict[str, Any],
+) -> str:
     user_prompt = (
         "Return ONLY JSON for this task output. "
-        "Follow the assigned agent schema exactly and include required envelope fields.\n"
+        "Follow the assigned agent output contract schema exactly.\n"
         f"task_id={task_id}\n"
         + json.dumps(work_item, ensure_ascii=False)
     )
     payload = {
         "model": model,
-        "temperature": 0,
         "messages": [
             {"role": "system", "content": system_prompt},
             {"role": "user", "content": user_prompt},
         ],
     }
+    if model_params:
+        payload.update(model_params)
     req = request.Request(
         "https://api.openai.com/v1/chat/completions",
         method="POST",
@@ -200,15 +223,21 @@ def envelope_path_for(task_id: str) -> Path:
     return Path("work_outputs") / f"{task_id}.envelope.json"
 
 
-def build_envelope_payload(task: dict[str, Any], status: str, errors: list[str] | None = None) -> dict[str, Any]:
+def build_envelope_payload(
+    task: dict[str, Any],
+    status: str,
+    errors: list[str] | None = None,
+    diagnostics: dict[str, Any] | None = None,
+) -> dict[str, Any]:
     return {
         "task_id": task["task_id"],
         "module_id": task["module_id"],
         "assigned_agent": task["assigned_agent"],
         "run_status": status,
-        "errors": [str(item) for item in (errors or [])],
+        "errors": [],
         "generated_at": utc_now(),
         "retryable": status != "ok",
+        "diagnostics": diagnostics or {},
     }
 
 
@@ -235,23 +264,21 @@ def should_include_required_coverage(task_id: str) -> bool:
     return any(task_id.startswith(prefix) for prefix in REQUIRED_COVERAGE_PREFIXES)
 
 
-def build_output_payload(
+def build_contract_payload(
     task: dict[str, Any],
     module: dict[str, Any],
     model_payload: dict[str, Any],
-    status: str,
-    errors: list[str] | None = None,
 ) -> dict[str, Any]:
     agent = task["assigned_agent"]
     payload: dict[str, Any] = {
         "task_id": task["task_id"],
         "module_id": task["module_id"],
         "assigned_agent": agent,
-        "status": status,
+        "status": "ok",
         "summary": str(model_payload.get("summary") or f"Generated output for {task['task_id']}"),
         "produced_files": deterministic_files(task["task_id"], agent),
         "notes": [str(note) for note in model_payload.get("notes", []) if isinstance(note, str)],
-        "errors": [str(item) for item in (errors or [])],
+        "errors": [],
     }
 
     payload.update(build_agent_payload(agent, model_payload, task))
@@ -270,8 +297,6 @@ def build_output_payload(
             "bsi_domains": [str(x) for x in claims.get("bsi_domains", []) if isinstance(x, str)],
         }
 
-    if status == "ok":
-        payload["errors"] = []
     return payload
 
 
@@ -281,7 +306,7 @@ def run_command(cmd: list[str]) -> tuple[int, str]:
     return proc.returncode, combined.strip()
 
 
-def mark_needs_input(task_id: str, error_text: str, task_status_path: Path, decision_log_path: Path) -> None:
+def mark_task_failure(task_id: str, error_text: str, task_status_path: Path, decision_log_path: Path, event: str) -> None:
     task_status = load_task_status(task_status_path)
     record = task_status.setdefault("tasks", {}).setdefault(task_id, {})
     attempts = int(record.get("attempts", 0)) + 1
@@ -296,7 +321,7 @@ def mark_needs_input(task_id: str, error_text: str, task_status_path: Path, deci
     append_decision_log(
         decision_log_path,
         {
-            "event": "engine_validation_failed",
+            "event": event,
             "timestamp": utc_now(),
             "task_id": task_id,
             "state": "needs_input",
@@ -429,36 +454,58 @@ def run_cycle(args: argparse.Namespace) -> int:
             raise RuntimeError(f"Missing model mapping for agent '{assigned_agent}'")
 
         try:
-            raw = call_model_http(api_key, model_name, system_prompt, work_item, task_id)
+            model_params = resolve_model_params(config, assigned_agent)
+            raw = call_model_http(api_key, model_name, system_prompt, work_item, task_id, model_params)
             parsed = parse_model_json(raw)
-            payload = build_output_payload(task, modules.get(task.get("module_id"), {}), parsed, status="ok")
+            payload = build_contract_payload(task, modules.get(task.get("module_id"), {}), parsed)
         except Exception as exc:
-            payload = build_output_payload(
-                task,
-                modules.get(task.get("module_id"), {}),
-                {"summary": f"Model error for {task_id}", "notes": []},
-                status="needs_input",
-                errors=[str(exc)],
+            envelope_path.parent.mkdir(parents=True, exist_ok=True)
+            envelope_path.write_text(
+                stable_dump(
+                    build_envelope_payload(
+                        task,
+                        status="error",
+                        errors=[str(exc)],
+                        diagnostics={"phase": "model_or_contract", "model": model_name},
+                    )
+                ),
+                encoding="utf-8",
             )
+            mark_task_failure(task_id, str(exc), task_status_path, decision_log_path, event="engine_model_failed")
+            print(f"model/contract failed for {task_id}")
+            continue
 
         output_path.parent.mkdir(parents=True, exist_ok=True)
         output_path.write_text(stable_dump(payload), encoding="utf-8")
         envelope_path.write_text(
-            stable_dump(build_envelope_payload(task, status=payload.get("status", "error"), errors=payload.get("errors", []))),
+            stable_dump(build_envelope_payload(task, status="produced", errors=[], diagnostics={"phase": "produced", "model": model_name})),
             encoding="utf-8",
         )
 
         rc_val, out_val = run_command([sys.executable, "scripts/validate_output.py", str(output_path)])
         if rc_val != 0:
-            mark_needs_input(task_id, out_val or "validator failed", task_status_path, decision_log_path)
+            envelope_path.write_text(
+                stable_dump(build_envelope_payload(task, status="needs_input", errors=[out_val or "validator failed"], diagnostics={"phase": "validation"})),
+                encoding="utf-8",
+            )
+            mark_task_failure(task_id, out_val or "validator failed", task_status_path, decision_log_path, event="engine_validation_failed")
             print(f"validation failed for {task_id}")
             continue
 
         rc_promote, out_promote = run_command([sys.executable, "scripts/promote_output.py", "--task-id", task_id])
         if rc_promote != 0:
-            mark_needs_input(task_id, out_promote or "promote failed", task_status_path, decision_log_path)
+            envelope_path.write_text(
+                stable_dump(build_envelope_payload(task, status="needs_input", errors=[out_promote or "promote failed"], diagnostics={"phase": "promotion"})),
+                encoding="utf-8",
+            )
+            mark_task_failure(task_id, out_promote or "promote failed", task_status_path, decision_log_path, event="engine_promotion_failed")
             print(f"promotion failed for {task_id}")
             continue
+
+        envelope_path.write_text(
+            stable_dump(build_envelope_payload(task, status="ok", errors=[], diagnostics={"phase": "accepted", "model": model_name})),
+            encoding="utf-8",
+        )
 
     rc_cov, out_cov = run_command([sys.executable, "scripts/generate_coverage.py"])
     if rc_cov != 0:

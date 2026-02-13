@@ -39,6 +39,9 @@ def _collect_allowed_keys(schema: dict[str, Any]) -> set[str]:
 
 
 def guard_file(path: Path) -> int:
+    if not path.name.endswith(".output.json"):
+        print(f"FAIL: only *.output.json files are supported: {path}")
+        return 1
     payload = load_json(path)
     if not isinstance(payload, dict):
         print(f"FAIL: {path} root must be an object")
@@ -81,8 +84,13 @@ def main() -> int:
         print(f"FAIL: target does not exist: {target}")
         return 1
 
+    files = iter_targets(target)
+    if not files:
+        print(f"FAIL: no *.output.json files found for target: {target}")
+        return 1
+
     code = 0
-    for file_path in iter_targets(target):
+    for file_path in files:
         code |= guard_file(file_path)
     return code
 

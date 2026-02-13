@@ -40,6 +40,9 @@ def load_schema(schema_path: Path) -> dict[str, Any]:
 
 
 def validate_file(output_path: Path, agent: str | None) -> int:
+    if not output_path.name.endswith(".output.json"):
+        print(f"FAIL: only *.output.json files are supported: {output_path}")
+        return 1
     try:
         from jsonschema.validators import Draft202012Validator
     except ImportError:
@@ -99,8 +102,13 @@ def main() -> int:
         print(f"FAIL: target does not exist: {target}")
         return 1
 
+    files = iter_json_files(target, recursive=args.recursive)
+    if not files:
+        print(f"FAIL: no *.output.json files found for target: {target}")
+        return 1
+
     code = 0
-    for file_path in iter_json_files(target, recursive=args.recursive):
+    for file_path in files:
         code |= validate_file(file_path, args.agent)
     return code
 

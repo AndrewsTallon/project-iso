@@ -19,7 +19,7 @@ This repository captures an ISO 27001 + BSI IT-Grundschutz compliance automation
 
 
 - `scripts/engine.py`: autonomous single-command loop runner for selection, model execution, validation, promotion, coverage refresh, and architecture reconciliation.
-- `config/engine_config.json`: model mapping + API key env-var name for the engine.
+- `config/engine_config.json`: model mapping, model parameter defaults/overrides, and API key env-var name for the engine.
 - `scripts/extract_controls.py`: workbook-to-JSON extractor utility.
 - `data/`: extracted control datasets.
 - `work_items/`: deterministic input payloads for agent tasks.
@@ -148,3 +148,6 @@ Enable guarded auto-apply for small additive architecture diffs:
 ```bash
 python scripts/engine.py --once --auto-apply-architecture
 ```
+
+
+Engine calls merge `model_params` + `model_params_by_agent` from config. Temperature must be non-zero if provided; `temperature=0` is explicitly rejected.
