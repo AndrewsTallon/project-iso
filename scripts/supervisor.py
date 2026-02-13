@@ -251,9 +251,13 @@ def main() -> int:
         task_id = task["task_id"]
         record = task_status["tasks"][task_id]
         previous_state = normalize_state(record.get("state"))
-        if previous_state == "pending":
+        if previous_state == "pending" and not args.dry_run:
             record["state"] = "assigned"
             record["last_updated"] = timestamp
+
+        resulting_state = record.get("state", previous_state)
+        if previous_state == "pending" and args.dry_run:
+            resulting_state = "assigned"
 
         rc = run_agent_runner(task_id, dry_run=args.dry_run)
         if rc != 0:
@@ -266,7 +270,7 @@ def main() -> int:
             "timestamp": timestamp,
             "task_id": task_id,
             "previous_state": previous_state,
-            "new_state": record.get("state", previous_state),
+            "new_state": resulting_state,
             "score": {
                 "bootstrap_priority": score[0],
                 "mvp_priority": score[1],
@@ -275,21 +279,25 @@ def main() -> int:
             "dry_run": args.dry_run,
         }
         decisions.append(decision)
-        append_decision_log(Path(args.decision_log), decision)
-        print(f"Selected {task_id} (state {previous_state} -> {record.get('state')})")
+        if not args.dry_run:
+            append_decision_log(Path(args.decision_log), decision)
+        print(f"Selected {task_id} (state {previous_state} -> {resulting_state})")
 
-    task_status_path.parent.mkdir(parents=True, exist_ok=True)
-    task_status_path.write_text(stable_dump(task_status), encoding="utf-8")
+    if args.dry_run:
+        print("Dry run: state files were not modified.")
+    else:
+        task_status_path.parent.mkdir(parents=True, exist_ok=True)
+        task_status_path.write_text(stable_dump(task_status), encoding="utf-8")
 
-    append_run_history(
-        Path(args.run_history),
-        {
-            "timestamp": timestamp,
-            "dry_run": args.dry_run,
-            "picked_tasks": [task["task_id"] for task in picked],
-            "pick_count": len(picked),
-        },
-    )
+        append_run_history(
+            Path(args.run_history),
+            {
+                "timestamp": timestamp,
+                "dry_run": args.dry_run,
+                "picked_tasks": [task["task_id"] for task in picked],
+                "pick_count": len(picked),
+            },
+        )
 
     if args.update_coverage:
         rc = subprocess.run([sys.executable, "scripts/generate_coverage.py"], check=False).returncode
