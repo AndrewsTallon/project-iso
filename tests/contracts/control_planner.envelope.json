@@ -1,0 +1,11 @@
+{
+  "task_id": "T99_contract_test",
+  "status": "needs_input",
+  "errors": [
+    "validator failed"
+  ],
+  "debug": {
+    "phase": "validation",
+    "attempt": 1
+  }
+}

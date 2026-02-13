@@ -269,8 +269,10 @@ python scripts/agent_runner.py --use-next-steps --dry-run
 python scripts/agent_runner.py --validate work_outputs/T01_platform_blueprint.output.json --agent control_planner
 python scripts/validate_output.py work_outputs/T01_platform_blueprint.output.json --agent control_planner
 python scripts/contract_guard.py work_outputs/T01_platform_blueprint.output.json
-python scripts/contract_guard.py tests/contracts/control_planner.valid.json
-python scripts/contract_guard.py tests/contracts/control_planner.invalid_extra_root.json
+python scripts/contract_guard.py tests/contracts/control_planner.valid.output.json
+python scripts/contract_guard.py tests/contracts/control_planner.invalid_extra_root.output.json
+# Negative example: envelope files are not contract artifacts
+python scripts/validate_output.py tests/contracts/control_planner.envelope.json
 ```
 
 ### Promotion and reconciliation

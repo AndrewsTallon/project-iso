@@ -1,0 +1,12 @@
+{
+  "task_id": "T99_contract_test",
+  "module_id": "mod_contract",
+  "assigned_agent": "control_planner",
+  "status": "ok",
+  "summary": "Contract invalid fixture (missing required plan)",
+  "produced_files": [
+    "docs/contract.json"
+  ],
+  "notes": [],
+  "errors": []
+}
