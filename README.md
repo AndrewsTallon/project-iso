@@ -30,20 +30,24 @@ This repository captures an ISO 27001 + BSI IT-Grundschutz compliance automation
 
 ## Environment prerequisites
 
-- **Python**: 3.10 or newer.
-- **Install dependencies**:
+- Python 3.10+
+- Install dependencies:
 
 ```bash
-python -m pip install -r requirements.txt
+pip install -r requirements.txt
 ```
 
-- **Quick verification**:
+- Run a preflight check before first execution:
 
 ```bash
-python -c "import jsonschema, openpyxl; print('ok')" 
+python scripts/preflight.py
 ```
 
-`requirements.txt` uses minimally compatible version pins (`>=`). To upgrade safely, refresh your virtual environment dependencies, then rerun the repository smoke/validation commands before committing updated pins.
+For runtime-only (on-prem appliance) deployment, run the runtime package without agents/model calls:
+
+```bash
+runtime/bin/run-once
+```
 
 ## Workflow
 

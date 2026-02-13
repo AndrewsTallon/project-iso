@@ -345,3 +345,37 @@ python scripts/agent_runner.py --task-id <NEW_TASK_ID>
 python scripts/validate_output.py work_outputs/<NEW_TASK_ID>.output.json --agent <NEW_AGENT>
 python scripts/contract_guard.py work_outputs/<NEW_TASK_ID>.output.json
 ```
+
+
+## On-prem appliance deployment model (AWOW Mini PC target)
+
+This repository supports a split model:
+
+- **Control/plan generation layer (optional in central environment):** `scripts/engine.py` and agent-driven outputs.
+- **On-prem runtime layer (required on appliance):** `runtime/` collectors/checks/reports that run fully offline from the internet except where your policy permits updates.
+
+For the AWOW Mini PC deployment intent:
+
+1. Install Python 3.10+ and dependencies:
+
+```bash
+pip install -r requirements.txt
+```
+
+2. Run preflight checks:
+
+```bash
+python scripts/preflight.py --skip-network
+```
+
+3. Execute runtime evidence and monitoring cycle:
+
+```bash
+runtime/bin/run-once
+```
+
+4. Collect generated artifacts under `runtime/output/` (`evidence/`, `checks/`, `reports/`, `export/`).
+
+Notes:
+- The on-prem runtime path does **not** require agents on the target appliance.
+- If `systemctl` is unavailable on the host, preflight highlights that logging-service detection may return unknown status.

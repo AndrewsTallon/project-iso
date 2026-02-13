@@ -31,15 +31,29 @@ def utc_run_id() -> str:
 def collect_linux_logging() -> dict[str, object]:
     supported = ["rsyslog", "systemd-journald"]
     active_services: list[str] = []
-    for service in supported:
-        cmd = ["systemctl", "is-active", service]
-        result = subprocess.run(cmd, capture_output=True, text=True, check=False)
-        if result.returncode == 0 and result.stdout.strip() == "active":
-            active_services.append(service)
+
+    diagnostics: list[str] = []
+    systemctl_path = subprocess.run(["bash", "-lc", "command -v systemctl"], capture_output=True, text=True, check=False)
+    collection_mode = "systemctl"
+
+    if systemctl_path.returncode != 0 or not systemctl_path.stdout.strip():
+        collection_mode = "unknown"
+        diagnostics.append("systemctl not available on host")
+    else:
+        for service in supported:
+            cmd = ["systemctl", "is-active", service]
+            result = subprocess.run(cmd, capture_output=True, text=True, check=False)
+            if result.returncode == 0 and result.stdout.strip() == "active":
+                active_services.append(service)
+            elif result.returncode not in (0, 3, 4):
+                diagnostics.append(f"systemctl is-active {service} returned {result.returncode}")
+
     return {
         "collector_id": "linux_logging",
         "host_id": socket.gethostname(),
         "active_services": sorted(active_services),
+        "collection_mode": collection_mode,
+        "diagnostics": diagnostics,
         "timestamp_utc": datetime.now(timezone.utc).isoformat(),
     }
 
