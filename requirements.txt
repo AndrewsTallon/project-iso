@@ -1,0 +1,8 @@
+# Minimal compatible pins for local/runtime tooling
+jsonschema>=4.23.0
+openpyxl>=3.1.5
+
+# Safe upgrade workflow:
+# 1) Create/update a virtual environment.
+# 2) Run: pip install --upgrade -r requirements.txt
+# 3) Re-run smoke/validation scripts before committing updated pins.

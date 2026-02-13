@@ -27,6 +27,24 @@ This repository captures an ISO 27001 + BSI IT-Grundschutz compliance automation
 - `modules/`: future collector module outputs.
 - `docs/runner_usage.md`: operational usage guide.
 
+
+## Environment prerequisites
+
+- **Python**: 3.10 or newer.
+- **Install dependencies**:
+
+```bash
+python -m pip install -r requirements.txt
+```
+
+- **Quick verification**:
+
+```bash
+python -c "import jsonschema, openpyxl; print('ok')" 
+```
+
+`requirements.txt` uses minimally compatible version pins (`>=`). To upgrade safely, refresh your virtual environment dependencies, then rerun the repository smoke/validation commands before committing updated pins.
+
 ## Workflow
 
 - Regenerate dependency-oriented execution guidance.
