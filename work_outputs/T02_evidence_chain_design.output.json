@@ -1,0 +1,46 @@
+{
+  "task_id": "T02_evidence_chain_design",
+  "module_id": "mod_evidence_integrity_export",
+  "assigned_agent": "evidence_engineer",
+  "status": "ok",
+  "summary": "Sample output for T02_evidence_chain_design.",
+  "produced_files": [
+    "docs/T02_evidence_chain_design.sample.json",
+    "work_outputs/T02_evidence_chain_design.output.json"
+  ],
+  "notes": [],
+  "errors": [],
+  "coverage_claims": {
+    "controls": [
+      "A.5.28",
+      "A.8.15",
+      "A.8.16",
+      "A.8.34"
+    ],
+    "modules": [
+      "mod_evidence_integrity_export"
+    ],
+    "bsi_domains": [
+      "CON",
+      "OPS",
+      "ORP",
+      "DER"
+    ]
+  },
+  "evidence_design": {
+    "manifest_fields": [
+      "task_id",
+      "module_id",
+      "collector_id",
+      "evidence_sha256",
+      "captured_at"
+    ],
+    "integrity_controls": [
+      "Canonical JSON encoding for manifests",
+      "Detached signature over manifest payload"
+    ],
+    "export_requirements": [
+      "Generate deterministic export bundle with manifest + checksum index"
+    ]
+  }
+}

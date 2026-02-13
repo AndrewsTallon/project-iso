@@ -1,0 +1,41 @@
+{
+  "task_id": "T04_asset_inventory_model",
+  "module_id": "mod_asset_inventory",
+  "assigned_agent": "control_planner",
+  "status": "ok",
+  "summary": "Sample output for T04_asset_inventory_model.",
+  "produced_files": [
+    "docs/T04_asset_inventory_model.sample.json",
+    "work_outputs/T04_asset_inventory_model.output.json"
+  ],
+  "notes": [],
+  "errors": [],
+  "coverage_claims": {
+    "controls": [
+      "A.5.9",
+      "A.8.1",
+      "A.8.6"
+    ],
+    "modules": [
+      "mod_asset_inventory"
+    ],
+    "bsi_domains": [
+      "ORP",
+      "CON",
+      "OPS",
+      "SYS",
+      "NET"
+    ]
+  },
+  "plan": {
+    "control_decisions": [
+      "Prioritize controls in scope: A.5.9, A.8.1, A.8.6"
+    ],
+    "architecture_constraints": [
+      "Anchor design to module mod_asset_inventory interfaces."
+    ],
+    "bsi_mapping_notes": [
+      "Map module outputs to BSI domains: ORP, CON, OPS, SYS, NET"
+    ]
+  }
+}

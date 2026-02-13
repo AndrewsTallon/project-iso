@@ -57,6 +57,8 @@ For detailed commands and extension guidance, see `docs/runner_usage.md`.
 
 Only `*.output.json` files are discoverable by contract validation and promotion gates; `*.envelope.json` files are operational metadata and are intentionally ignored by those tools.
 
+Bundled sample outputs for `T01`–`T04` are provided in `work_outputs/` and include deterministic `coverage_claims` derived from each task work item so promotion commands can be run directly.
+
 - Guard root-level output contracts (reject unknown keys, including extra root keys):
 
 ```bash
@@ -103,6 +105,9 @@ python scripts/supervisor.py --dry-run --pick 2
 python scripts/supervisor.py --pick 1 --update-coverage
 python scripts/validate_output.py work_outputs/T01_platform_blueprint.output.json --agent control_planner
 python scripts/promote_output.py --task-id T01_platform_blueprint
+python scripts/promote_output.py --task-id T02_evidence_chain_design
+python scripts/promote_output.py --task-id T03_shared_connector_framework
+python scripts/promote_output.py --task-id T04_asset_inventory_model
 python scripts/generate_coverage.py
 ```
 

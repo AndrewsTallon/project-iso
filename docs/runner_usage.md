@@ -277,8 +277,13 @@ python scripts/validate_output.py tests/contracts/control_planner.envelope.json
 
 ### Promotion and reconciliation
 
+Bundled sample outputs for `T01` through `T04` are checked in under `work_outputs/` and include non-empty `coverage_claims.controls`, `coverage_claims.modules`, and `coverage_claims.bsi_domains` values sourced from each task work item.
+
 ```bash
 python scripts/promote_output.py --task-id T01_platform_blueprint
+python scripts/promote_output.py --task-id T02_evidence_chain_design
+python scripts/promote_output.py --task-id T03_shared_connector_framework
+python scripts/promote_output.py --task-id T04_asset_inventory_model
 python scripts/reconcile_architecture.py --mode propose
 python scripts/reconcile_architecture.py --mode apply
 python scripts/reconcile_architecture.py --mode propose --task-ids T01_platform_blueprint,T02_evidence_chain_design
