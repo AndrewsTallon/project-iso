@@ -69,6 +69,12 @@ python scripts/contract_guard.py work_outputs/
 python scripts/validate_output.py work_outputs/ --recursive
 ```
 
+- Negative example (operational envelope is not a contract artifact):
+
+```bash
+python scripts/validate_output.py tests/contracts/control_planner.envelope.json
+```
+
 - Run minimal offline runtime orchestrator once:
 
 ```bash
