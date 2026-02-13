@@ -134,16 +134,19 @@ def build_work_item(
 
 def write_work_files(task_id: str, item: dict[str, Any], dry_run: bool = False) -> None:
     work_item_path = Path("work_items") / f"{task_id}.input.json"
-    output_path = Path("work_outputs") / f"{task_id}.output.json"
+    envelope_path = Path("work_outputs") / f"{task_id}.envelope.json"
 
     work_item_path.write_text(json.dumps(item, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
-    if not dry_run and not output_path.exists():
+    if not dry_run and not envelope_path.exists():
         placeholder = {
             "task_id": task_id,
-            "status": "needs_input",
-            "message": "Placeholder output file created by agent_runner."
+            "run_status": "prepared",
+            "errors": [],
+            "generated_at": "1970-01-01T00:00:00+00:00",
+            "retryable": False,
+            "diagnostics": {"source": "agent_runner_placeholder"}
         }
-        output_path.write_text(json.dumps(placeholder, indent=2) + "\n", encoding="utf-8")
+        envelope_path.write_text(json.dumps(placeholder, indent=2) + "\n", encoding="utf-8")
 
 
 def load_schema(schema_path: Path) -> dict[str, Any]:
@@ -158,6 +161,9 @@ def load_schema(schema_path: Path) -> dict[str, Any]:
 
 
 def validate_file(output_path: Path, agent: str | None) -> int:
+    if not output_path.name.endswith(".output.json"):
+        print("ERROR: --validate accepts only *.output.json contract files.")
+        return 1
     try:
         from jsonschema.validators import Draft202012Validator
     except ImportError:
@@ -194,7 +200,7 @@ def main() -> int:
     parser.add_argument("--task-id", action="append", help="Specific task ID(s) to process.")
     parser.add_argument("--dry-run", action="store_true", help="Generate work items only.")
     parser.add_argument("--use-next-steps", action="store_true", help="Select tasks listed in next_steps.md.")
-    parser.add_argument("--validate", help="Validate a JSON output file path.")
+    parser.add_argument("--validate", help="Validate a *.output.json contract file path.")
     parser.add_argument("--agent", help="Agent type override for --validate.")
     args = parser.parse_args()
 

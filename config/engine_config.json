@@ -8,5 +8,13 @@
     "qa_validation": "o3",
     "security_hardening": "o3",
     "documentation_generator": "gpt-4.1-mini"
+  },
+  "model_params": {
+    "temperature": 0.2
+  },
+  "model_params_by_agent": {
+    "collector_engineer": {
+      "max_tokens": 3000
+    }
   }
 }

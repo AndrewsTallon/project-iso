@@ -98,6 +98,15 @@ python scripts/engine.py --dry-run --once
 
 ---
 
+
+### Engine model parameter policy
+
+Model request parameters are now config-driven from `config/engine_config.json`:
+
+- `model_params`: defaults applied to every model call (example: `temperature: 0.2`).
+- `model_params_by_agent`: per-agent overrides merged on top of defaults.
+- Safety guard: `scripts/engine.py` rejects resolved `temperature == 0` before any HTTP request is sent.
+
 ## Definition of Done (DoD)
 
 This project tracks two distinct completion targets. Treat them as separate gates:
